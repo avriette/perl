@@ -7,7 +7,7 @@ use Carp qw{ confess };
 
 use base qw{ YAML::Accessor };
 
-our $yml = './testdata/testdata.yml';
+our $yml = './testdata/testdata.yaml';
 
 ok( -e $yml );
 

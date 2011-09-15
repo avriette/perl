@@ -1,13 +1,12 @@
 package Foo;
 
+use common::sense;
+
 use Test::More tests => 12;
-use warnings;
-use strict;
-use Carp qw{ confess };
 
 use base qw{ YAML::Accessor };
 
-our $yml = './testdata/testdata.yml';
+our $yml = './testdata/testdata.yaml';
 
 ok( -e $yml );
 

@@ -1,13 +1,11 @@
 package YAML::Accessor;
 
-use strict;
-use warnings;
+use common::sense;
 
 use base qw{ Class::Accessor };
 use YAML::XS;
 use Params::Validate qw{ :all };
 
-use feature qw{ :5.10.0 };
 use feature qw{ state };
 
 sub new {
@@ -61,16 +59,23 @@ sub new {
 	# YAML::Accessor object, we want to access the actual YAML::XS
 	# object.
 	if ($params{readonly}) {
-		$package->mk_ro_accessors( keys %{ $yaml } );
+		foreach my $key ( %{ $yaml } ) {
+			if (ref $yaml->{$key} eq 'HASH') {
+				my $accessor = bless $yaml->{$key}, $package;
+				$obj->{$key} = $accessor;
+				
+			}
+			$package->mk_ro_accessors( keys %{ $yaml } );
 		return $obj;
 	}
 	else {
+		die "Sorry, mutators are not implemented. No ponies.";
 		$package->mk_accessors( keys %{ $yaml } );
 		return $obj;
 	}
 }
 
-sub set {
+sub set { # {{{
 	my $self = shift;
 	my ($key, @values) = (@_);
 	
@@ -87,7 +92,7 @@ sub set {
 	}
 	
 	return @values;
-}
+} # }}} 
 
 sub get {
 	my $self = shift;

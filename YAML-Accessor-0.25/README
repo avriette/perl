@@ -1,4 +1,4 @@
-YAML-Accessor version 0.10
+YAML-Accessor version 0.3
 ==========================
 
 I saw a need to integrate Class::Accessor with YAML::XS. You
@@ -23,6 +23,7 @@ This module requires these other modules and libraries:
   YAML::XS
   Class::Accessor
   Params::Validate
+	common::sense
 
 COPYRIGHT AND LICENCE
 
