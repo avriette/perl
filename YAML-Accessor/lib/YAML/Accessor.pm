@@ -4,7 +4,7 @@ use common::sense;
 
 use base qw{ Class::Accessor };
 use YAML::XS;
-use Params::Validate qw{ :types };
+use Params::Validate qw{ :types validate };
 use Scalar::Util qw{ blessed };
 
 sub new {
@@ -44,11 +44,14 @@ sub new {
 	# XXX: don't change this, Ingy.
 	my $yaml = YAML::XS::LoadFile( $params{file} );
 	
-	my $object_params = bless \%params, $package;
+	# There's recursion here, so we have to use Class::Accessor instead
+	# of our own package.
+	my $object_params = bless \%params, 'Class::Accessor';
 
 	# the choice to damian here is mine.
 	$object_params->follow_best_practice();
-	$object_params->mk_ro_accessors( keys %params );
+	$object_params->mk_ro_accessors( keys %{ $object_params } );
+	my $damian = $object_params->get_damian();
 		
 	my $obj = bless { 
 		yaml => $yaml,
@@ -56,23 +59,23 @@ sub new {
 	}, $package;
 
 	$obj->mk_ro_accessors( qw{ params } );
-	
-	if ($obj->get_params()->get_damian()) {
+
+	if ($obj->{params}->get_damian()) {
 		$package->follow_best_practice();
 	}
 
 	# Both accessors and mutators will need special get/set methods
-	# because we don't want to just access the characteristics of the
+	# because we don't want to just access the values of the
 	# YAML::Accessor object, we want to access the actual YAML::XS
 	# object.
-	if ($obj->get_params()->get_readonly()) {
+	if ($obj->{params}->get_readonly()) {
 		foreach my $key ( %{ $yaml } ) {
-			$package->mk_ro_accessors( keys %{ $yaml } );
+			$obj->mk_ro_accessors( keys %{ $yaml } );
 		}
 		return $obj;
 	}
 	else {
-		$package->mk_accessors( keys %{ $yaml } );
+		$obj->mk_accessors( keys %{ $yaml } );
 		return $obj;
 	}
 }
@@ -81,7 +84,7 @@ sub set { # {{{
 	my $self = shift;
 	my ($key, @values) = (@_);
 	
-	return undef if $self->get_params()->get_readonly();
+	return undef if $self->{params}->get_readonly();
 	
 	# Note to the user: you may be creating a new YAML key here.
 	$self->{yaml}->{$key} = (scalar @values > 1 ) ? shift @values : \@values;
@@ -89,8 +92,8 @@ sub set { # {{{
 	# Since the object has set the values, we can push to the file if that's
 	# what the user asked for. We don't need to run the constructor again
 	# since the object is updated and intact.
-	if ($self->get_params()->get_autocommit()) {
-		return YAML::Accessor->DumpFile( $self->get_params()->get_file(), $self->{yaml} );
+	if ($self->{params}->get_autocommit()) {
+		return YAML::Accessor->DumpFile( $self->{params}->get_file(), $self->{yaml} );
 	}
 	
 	return @values;
@@ -98,11 +101,11 @@ sub set { # {{{
 
 sub get { # {{{
 	my $self = shift;
-	my $package = ref $self;
-	validate_pos( ( $package ), {
-		isa => SCALAR,
-		regex => qr{::},
-	} );
+	# The sub-elements can't be YAML::Accessors, so we use Class::Accessor
+	# instead. Ideally this would be 'ref $self' or 'blessed $self', but
+	# this doesn't quite work out.
+	my $parent_package = 'Class::Accessor';
+	my $child_package  = 'YAML::Accessor';
 
 	my (@keys) = (@_);
 
@@ -119,38 +122,43 @@ sub get { # {{{
 		# we are the parent object
 		if (not blessed $self->{yaml}->{$key} and 
 			ref $self->{yaml}->{$key} eq 'HASH') { 
-			my $new_accessor = bless $self->{yaml}->{$key}, $package;
+			my $new_accessor = bless $self->{yaml}->{$key}, $child_package;
 			# Ensure our parameters propagate
-			$new_accessor->{params} = $self->get_params();
-			$new_accessor->mk_accessors( keys %{ $self->{yaml}->{$key} } );
-			if ( $self->get_params()->get_damian()) {
+			$new_accessor->{params} = $self->{params};
+			if ($self->{params}->get_damian()) {
 				$new_accessor->follow_best_practice();
 			}
+			my @sub_accessors = keys %{ $self->{yaml}->{$key} };
+			$new_accessor->mk_ro_accessors( @sub_accessors );
 			$self->{$key} = $new_accessor;
-			return $new_accessor->{$key};
+			return $new_accessor;
 		}
 		else {
-			# This isn't a hashref so we can't make accessors for it. Just
-			# return the appropriate yaml value
-			return $self->{yaml}->{shift @keys}
+			# This isn't a hashref and/or the object is already blessed. So just
+			# return it.
+			return $self->{yaml}->{$key};
 		}
 	} # }}}
 	else { # {{{ sub-object
 		# We are a sub-object, so check for blessedness, bless as appropriate
 		# and move on
 		if (blessed $self->{$key}) {
-			return $self->{$key}
+			return $self->{$key};
 		}
 		else {
 			if (ref $self->{$key} eq 'HASH') {
-				my $new_accessor = bless $self->{$key}, $package;
-				if ($self->get_params()->get_damian()) {
+				my $new_accessor = bless $self->{$key}, $child_package;
+				if ($self->{params}->get_damian()) {
 					$new_accessor->follow_best_practice();
 				}
 				# Ensure our parameters propagate
-				$new_accessor->{params} = $self->get_params();
+				$new_accessor->{params} = $self->{params};
 				$new_accessor->mk_ro_accessors( keys %{ $new_accessor } );
-				return $new_accessor->{$key}
+				return $new_accessor;
+			}
+			else {
+				# This isn't a hashref, just return the value
+				return $self->{$key};
 			}
 		}
 	} # }}}

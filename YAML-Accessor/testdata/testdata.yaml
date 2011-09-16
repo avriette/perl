@@ -14,7 +14,7 @@ mapping :
   key3 : value3
 
 nested :
-- parent :
+  parent :
     child1 :
       childkey1 : childvalue1
       childkey2 : childvalue2
