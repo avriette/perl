@@ -4,9 +4,8 @@ use common::sense;
 
 use base qw{ Class::Accessor };
 use YAML::XS;
-use Params::Validate qw{ :all };
-
-use feature qw{ state };
+use Params::Validate qw{ :types };
+use Scalar::Util qw{ blessed };
 
 sub new {
 	my $package = shift;
@@ -44,13 +43,21 @@ sub new {
 	# return YAML::XS::LibYAML::Load(do { local $/; <$IN> });
 	# XXX: don't change this, Ingy.
 	my $yaml = YAML::XS::LoadFile( $params{file} );
+	
+	my $object_params = bless \%params, $package;
+
+	# the choice to damian here is mine.
+	$object_params->follow_best_practice();
+	$object_params->mk_ro_accessors( keys %params );
 		
 	my $obj = bless { 
 		yaml => $yaml,
-		params => \%params,
+		params => $object_params,
 	}, $package;
+
+	$obj->mk_ro_accessors( qw{ params } );
 	
-	if ($params{damian}) {
+	if ($obj->get_params()->get_damian()) {
 		$package->follow_best_practice();
 	}
 
@@ -58,18 +65,13 @@ sub new {
 	# because we don't want to just access the characteristics of the
 	# YAML::Accessor object, we want to access the actual YAML::XS
 	# object.
-	if ($params{readonly}) {
+	if ($obj->get_params()->get_readonly()) {
 		foreach my $key ( %{ $yaml } ) {
-			if (ref $yaml->{$key} eq 'HASH') {
-				my $accessor = bless $yaml->{$key}, $package;
-				$obj->{$key} = $accessor;
-				
-			}
 			$package->mk_ro_accessors( keys %{ $yaml } );
+		}
 		return $obj;
 	}
 	else {
-		die "Sorry, mutators are not implemented. No ponies.";
 		$package->mk_accessors( keys %{ $yaml } );
 		return $obj;
 	}
@@ -79,7 +81,7 @@ sub set { # {{{
 	my $self = shift;
 	my ($key, @values) = (@_);
 	
-	return undef if $self->{params}->{readonly};
+	return undef if $self->get_params()->get_readonly();
 	
 	# Note to the user: you may be creating a new YAML key here.
 	$self->{yaml}->{$key} = (scalar @values > 1 ) ? shift @values : \@values;
@@ -87,29 +89,74 @@ sub set { # {{{
 	# Since the object has set the values, we can push to the file if that's
 	# what the user asked for. We don't need to run the constructor again
 	# since the object is updated and intact.
-	if ($self->{params}->{autocommit}) {
-		return YAML::Accessor->DumpFile( $self->{params}->{file}, $self->{yaml} );
+	if ($self->get_params()->get_autocommit()) {
+		return YAML::Accessor->DumpFile( $self->get_params()->get_file(), $self->{yaml} );
 	}
 	
 	return @values;
 } # }}} 
 
-sub get {
+sub get { # {{{
 	my $self = shift;
+	my $package = ref $self;
+	validate_pos( ( $package ), {
+		isa => SCALAR,
+		regex => qr{::},
+	} );
+
 	my (@keys) = (@_);
-	
+
 	# Hashrefslice again because they have asked for multiple keys.
 	# Class::Accessor says this can happen. I'm not sure how that's
 	# possible.
 	if ( scalar @keys > 1 ) {
 		return [ @{ $self->{yaml} }{ @keys } ]
 	}
-	else {
-		return $self->{yaml}->{shift @keys}
-	}
-}
 
-"pie";
+	my $key = shift @keys;
+
+	if (exists $self->{yaml}) { # {{{ top-most object
+		# we are the parent object
+		if (not blessed $self->{yaml}->{$key} and 
+			ref $self->{yaml}->{$key} eq 'HASH') { 
+			my $new_accessor = bless $self->{yaml}->{$key}, $package;
+			# Ensure our parameters propagate
+			$new_accessor->{params} = $self->get_params();
+			$new_accessor->mk_accessors( keys %{ $self->{yaml}->{$key} } );
+			if ( $self->get_params()->get_damian()) {
+				$new_accessor->follow_best_practice();
+			}
+			$self->{$key} = $new_accessor;
+			return $new_accessor->{$key};
+		}
+		else {
+			# This isn't a hashref so we can't make accessors for it. Just
+			# return the appropriate yaml value
+			return $self->{yaml}->{shift @keys}
+		}
+	} # }}}
+	else { # {{{ sub-object
+		# We are a sub-object, so check for blessedness, bless as appropriate
+		# and move on
+		if (blessed $self->{$key}) {
+			return $self->{$key}
+		}
+		else {
+			if (ref $self->{$key} eq 'HASH') {
+				my $new_accessor = bless $self->{$key}, $package;
+				if ($self->get_params()->get_damian()) {
+					$new_accessor->follow_best_practice();
+				}
+				# Ensure our parameters propagate
+				$new_accessor->{params} = $self->get_params();
+				$new_accessor->mk_ro_accessors( keys %{ $new_accessor } );
+				return $new_accessor->{$key}
+			}
+		}
+	} # }}}
+} # }}}
+
+22/7;
 
 =pod
 
@@ -119,22 +166,24 @@ YAML::Accessor
 
 =head1 ABSTRACT
 
-Syntactic sugar for YAML::XS using Class::Accessor (with validation!).
+Syntactic sugar for YAML::XS using Class::Accessor with sub-accessors.
 
 =head1 SYNOPSIS
 
-	package YConfig;
-	use base qw{ YAML::Accessor };
-	
-	# Load by filename
-	my $yc = YConfig->new(
-		file => 'config.yml',  # Can be a filehandle.
-		autocommit => 0,       # This is a default. Can be 1 (true).
-		readonly   => 1,       # This is a default. Can be 1 (true).
-		damian     => 1,       # See below. Can be 0 (false).
-	)
-	or die "failed to load 'config.yml' [$!]";
-	
+  package YConfig;
+  use base qw{ YAML::Accessor };
+  
+  # Load by filename
+  my $yc = YConfig->new(
+    file => 'config.yml',  # Can be a filehandle.
+    readonly   => 1,       # This is a default. Can be 1 (true).
+    damian     => 1,       # See below. Can be 0 (false).
+
+    # Implemented, but probably buggy and not tested.
+    autocommit => 0,       # This is a default. Can be 1 (true).
+  )
+  or die "failed to load 'config.yml' [$!]";
+
 =head1 DESCRIPTION
 
 C<YAML::Accessor> aims to create a "gettr/settr" interface for YAML
@@ -192,6 +241,26 @@ In the event you have not turned on C<autocommit> during the constructor,
 the mutator will simply return the value(s) supplied. For more detail,
 have a look at the code. But really, it's not too complicated.
 
+=head1 SUB-ACCESSORS
+
+When calling an accessor method, the object will try to determine whether
+the value you are requesting is itself an accessor (or rather, should be
+made an accessor). Therefore you may use a construct such as:
+
+  $obj->get_foo()->get_bar();
+
+and it should Just Work. Note that this only works for hash values. If you
+request an accessor that has an array or scalar (or anything else), you'll
+simply get what you asked for.
+
+Note that this is not standard L<Class::Accessor> behavior. The reason for
+this is that YAML allows us to have deeply-nested structures, and having to
+refer to their hash keys after a single layer of accessors, like such:
+
+  $obj->get_foo()->{bar};
+
+is tedious and misses the point of this package.
+
 =head1 SEE ALSO
 
   L<YAML::XS>
@@ -217,6 +286,9 @@ Also, it looks like doing something like
   use base qw{ YAML::Accessor  };
 
 is fraught with peril. Don't do that.
+
+While not exactly a bug, this package uses L<YAML::XS> instead of L<YAML>
+in the interest of speed and ingy's preference.
 
 =head1 AUTHOR
 
