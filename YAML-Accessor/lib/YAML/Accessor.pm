@@ -164,6 +164,16 @@ sub get { # {{{
 	} # }}}
 } # }}}
 
+# In case you're not using autocommit and want to force a write to the disk.
+sub commit { # {{{
+	my $self = shift;
+	my $yaml = $self->{yaml};
+	my $fn   = $self->{params}->{file};
+	# arg 1 is a filename, everything afterwards gets written to the specified
+	# file.
+	return YAML::XS::DumpFile( $fn, $yaml ); # ingy, does this set $! ?
+} # }}}
+
 22/7;
 
 =pod
