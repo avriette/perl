@@ -97,7 +97,7 @@ sub set { # {{{
 	# what the user asked for. We don't need to run the constructor again
 	# since the object is updated and intact.
 	if ($self->{params}->get_autocommit()) {
-		YAML::XS->DumpFile( $self->{params}->get_file(), $self->{yaml} );
+		$self->commit();
 		return $self->{yaml}->{$key};
 	}
 	
