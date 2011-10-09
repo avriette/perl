@@ -12,7 +12,7 @@ sub a_sub {
 		ok( defined $ot, "time has value" );
 	}
 	ok( defined $nt, "new timestamp has value" );
-	ok( $nt > $ot, "new timestamp came from the future" );
+	if (not $first) { ok( $nt > $ot, "new timestamp came from the future" ) }
 }
 
 my $t = Time::Checkpoint->new( callback => \&a_sub );

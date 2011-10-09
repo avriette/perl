@@ -1,0 +1,12 @@
+Changes
+contrib/benchmarks/with_vs_without_callback.pl
+contrib/examples/checkpoints.pl
+lib/Time/Checkpoint.pm
+LICENSE
+Makefile.PL
+README
+t/00_use.t
+t/01_create.t
+t/02_create_with_callbacks.t
+t/03_create_multiple_cps.t
+MANIFEST

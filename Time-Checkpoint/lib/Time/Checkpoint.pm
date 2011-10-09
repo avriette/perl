@@ -1,29 +1,26 @@
 package Time::Checkpoint;
 
-use warnings;
-use strict;
+# I don't like him either, but i do like what this code does.
+use common::sense;
+
+use feature qw{ state };
 
 use Time::HiRes      qw{ time };
 use Params::Validate qw{ :all };
-use Carp          qw{ confess };
-
-our $VERSION = [ qw{ $Revision: 1.1 $ } ]->[1];
 
 use constant IDX_CALLBACK => 0;
 use constant IDX_CKPOINTS => 1;
 
 sub new {
-	unshift @_, 'class';
+	my $package = shift;
 
-	validate( @_, {
-		class      => { 
-			type     => SCALAR,
-		},
-		callback   => { 
+	state $val = {
+		callback   => {
 			type     => CODEREF,
 			optional => 1,
 		},
-	} );
+	};
+	validate( @_, $val );
 
 	my $self = [ ];
 
@@ -33,14 +30,15 @@ sub new {
 
 	$self->[IDX_CKPOINTS] = { };
 
-	return bless $self, { @_ }->{class};
+	return bless $self, $package;
 }
 
 sub checkpoint {
-	validate_pos( @_,
+	state $val = [
 		{ isa  => 'Time::Checkpoint', },
 		{ type => SCALAR,             },
-	);
+	];
+	validate_pos( @_, @$val );
 
 	my ($self, $cp) = (@_);
 
@@ -62,18 +60,15 @@ sub checkpoint {
 		$self->[IDX_CKPOINTS]->{$cp} = $nt;
 		return $nt - $ot;
 	}
-	else { 
-		# We have no idea why we're here.
-		confess;
-	}
 }
 
 sub cp { checkpoint( @_ ) }
 
 sub list_checkpoints {
-	validate_pos( @_,
-		{ isa  => 'Time::Checkpoint', },
-	);
+	state $val = [
+		{ isa => 'Time::Checkpoint' },
+	];
+	validate_pos( @_, @$val );
 	my ($self) = (@_);
 	my $points = $self->[IDX_CKPOINTS];
 	return $points;
@@ -82,10 +77,11 @@ sub list_checkpoints {
 sub lscp { list_checkpoints( @_ ) }
 
 sub checkpoint_status {
-	validate_pos( @_,
+	state $val = [
 		{ isa  => 'Time::Checkpoint', },
 		{ type => SCALAR,             },
-	);
+	];
+	validate_pos( @_, @$val );
 
 	my ($self, $cp) = (@_);
 
@@ -95,10 +91,11 @@ sub checkpoint_status {
 sub cpstat { checkpoint_status( @_ ) }
 
 sub checkpoint_remove {
-	validate_pos( @_,
+	state $val = [
 		{ isa  => 'Time::Checkpoint', },
 		{ type => SCALAR,             },
-	);
+	];
+	validate_pos( @_, @$val );
 
 	my ($self, $cp) = (@_);
 
@@ -114,10 +111,11 @@ sub checkpoint_remove {
 sub cprm { checkpoint_remove( @_ ) }
 
 sub flush {
-	validate_pos( @_,
+	state $val = [
 		{ isa  => 'Time::Checkpoint', },
 		{ type => SCALAR,             },
-	);
+	];
+	validate_pos( @_, @$val );
 
 	my ($self)= (@_);
 
@@ -232,8 +230,7 @@ Removes all checkpoints.
 
 =head1 AUTHOR
 
-  Alex J. Avriette
-  (alex@posixnap.net)
+  Alex J. Avriette <alex@cpan.org>
 
 =head1 BUGS
 

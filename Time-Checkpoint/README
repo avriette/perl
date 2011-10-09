@@ -4,8 +4,9 @@ frequently enough that I decided it would be a good idea for it to be
 on the CPAN (and besides, somebody was probably doing something similar
 anyways).
 
-I don't want to hear how this is a waste of space or time.  If you
-consider it so, please send your local congressman a letter (on *any*
-issue!) rather than waste the effort on me.
+If you use this module and would like to see it more formally supported,
+let me know. As far as I know, there is precisely one user other than
+myself out there.
 
-alex
+I should probably move this into the Benchmark:: tree or deprecate it as
+some of its functionality is present in the Benchmark module itself.
