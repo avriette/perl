@@ -1,0 +1,80 @@
+Further updates to this package should be available from CPAN:
+http://search.cpan.org/AUTHOR/A/ALEX/TDMA/
+
+#
+# This module is not intended to require 64-bit support
+# but the objects it creates can rapidly exhaust your
+# given slice. This means you may run out of ram and your
+# test may fail, despite the API still working. Right now,
+# there is a hack in place to prevent failure during
+# automated testing.
+#
+# Nothing other than my own bugs should prevent you from
+# using this code the way it is, if you want to build
+# partial epochs or see how the TDMA stack is composed
+# (I had to reverse-engineer a stack of *printed* powerpoint
+# documents!). So, this is pre-release software, and thar
+# be dragons. I'm fixing it, but it will be slow unless
+# somebody would like to either help or get this more complete.
+# Right now it needs a lot more tests.
+#
+# Alex J. Avriette, April Fools' Day, 2010.
+#
+
+The purpose of this project at the moment is to teach more than to be
+used for communications. On the computer I initially began development
+on (A 2ghz Macbook), it was nowhere near fast enough to actually work on
+an epoch and be useful. I now develop on a Macbook Air, which is
+substantially slower. So, if you find a way to marshal data and build
+your objects fast enough, you can in fact speak TDMA to whatever you'd
+like.
+
+TDMA is pretty cool in that, provided you have key escrow, it's damn
+difficult to break as encryption (because of jitter, propagation, and
+other tricks I am sure people will come up with – like jitter and
+propagation that look an awful lot like HTTP traffic or something).
+
+Even without transmission start keys (or "crypto ignition keys,"
+"certificates," even ssh identities, whatever you want to call them --
+you must have them before you start talking), the communication happens
+across either one channel with many, many slices, or it happens across
+many, many channels with relatively few slices per each channel. This
+means that anyone attempting to listen in has to know how to reassemble
+the traffic – by knowing the epoch or by having sufficient data to make
+a "guess" – and do so in a fashion that is both as quick as yours
+(suppose you're transmitting at 3gbit and they're only able to pull it
+down at 100mbit), and is smart enough to do the reassembly in real-time.
+If you are willing to accept a little bit of loss in your communication,
+you can even arbitrarily drop packets – or insert "junk" packets which
+you don't want anyways – to reduce the amount of time you spend actually
+processing the data (as mentioned elsewhere, this is processor
+intensive, depending on your data).
+
+So, really, this is a framework upon which you can build very fancy,
+very hard to break communications protocols, or you can just play with
+the code and learn how TDMA works.
+
+TDMA, for what it's worth, has been out of use for many years in cell-
+phone usage, so you're not likely to get very far there, and you're
+probably not going to get a chance to speak to an F-16. You might be
+able to listen, but again, without knowing the epoch, having the keys,
+and getting every single packet, it's really tough.
+
+I'd also like to say that I did not use any classified military data in
+building this software. I did not build it with the intent to disrupt
+traffic between military vehicles or between cellular providers and
+their customers. I built this module to teach myself how TDMA works,
+because I just learn better through programming. I really hope you don't
+go and use this software to mess with the military. They don't like
+that.
+
+This software is best used as a teaching tool than as a piece of software
+as such. To get the speed you would need, you would require FPGA-like
+speeds, and perl, even on sixteen-way-Macintoshes, isn't going to be
+fast enough. Sorry.
+
+It might teach you how to do it with multiplicity in C, and if that's
+the case, it might be fast enough and you might just come up with the
+new OTP uncrackable point-to-point system. Good luck with that, but
+don't let me know. I don't need the fibbies asking me why I felt it a
+good idea to codify TDMA in perl.
