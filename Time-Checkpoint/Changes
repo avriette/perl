@@ -7,3 +7,6 @@ Version 0.1 - Sun Oct  9 03:24:58 EDT 2011
 	Found a minor bug in a test.
 	There's now relatively little difference in overhead between using a callback and not using
 		a callback, except the actual callback code itself.
+
+Version 0.35 - See above version.
+	Consolidated a versioning error on PAUSE (which was my fault, I guess.)
