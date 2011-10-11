@@ -1,0 +1,16 @@
+INSTALL
+LICENSE
+Makefile.PL
+MANIFEST
+MANIFEST.SKIP
+README
+
+lib/Net/TDMA/Constants.pm
+lib/Net/TDMA/Day/Epoch/Frame/Slot.pm
+lib/Net/TDMA/Day/Epoch/Frame.pm
+lib/Net/TDMA/Day/Epoch.pm
+lib/Net/TDMA/Day.pm
+lib/Net/TDMA.pm
+
+t/00_day.t
+META.yml                                 Module meta-data (added by MakeMaker)

@@ -1,7 +1,7 @@
 package YAML::Accessor;
 
 use common::sense;
-
+use feature qw{ state };
 use base qw{ Class::Accessor };
 use YAML::XS;
 use Params::Validate qw{ :types validate };
