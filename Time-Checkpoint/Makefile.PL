@@ -1,5 +1,4 @@
 use ExtUtils::MakeMaker;
-use Time::HiRes;
 
 WriteMakefile(
     'NAME'      => 'Time::Checkpoint',
