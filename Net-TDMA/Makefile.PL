@@ -1,7 +1,5 @@
 #!/usr/bin/perl
 
-use warnings; 
-use strict;
 use ExtUtils::MakeMaker;
 
 # This is a temporary fix suggested by David Golden

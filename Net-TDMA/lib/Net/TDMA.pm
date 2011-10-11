@@ -73,7 +73,7 @@ sub time_to_epoch {
 # XXX: we need to reach into the epoch object to pull out a frame
 # so we need to iterate the frame_num the ame way we do for
 # $SECONDS_PER_FRAME.
-sub time_to_frame {	
+sub time_to_frame {
 	my ($self, $day, $time) = (@_);
 
 	my $epoch = $self->time_to_epoch( $time );
@@ -221,7 +221,7 @@ number). If instead we transmit at 16,000 bits per second, that boils
 down to:
 	
 	125 bits per slot
-	192,000	bits per frame
+	192,000 bits per frame
 	294,912,000 bits per epoch
 	33,177,600,000 bits per day
 	
