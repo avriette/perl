@@ -1,0 +1,2 @@
+"bots" contains lots of historic code that nobody needs.
+"plugins" contains the features that those bots used, eventually, inside the "pelvis" framework.
