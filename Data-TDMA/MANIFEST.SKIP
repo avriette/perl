@@ -1,0 +1,12 @@
+.*\.swo
+.*\.swp
+.*\.tmp
+\.svn/.*
+\.cvs/.*
+.*\.tar.gz
+.*\.tgz
+TDMA.tmproj
+*DS_Store
+Makefile
+Makefile.old
+./**svn-*.tmp

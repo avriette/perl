@@ -1,0 +1,8 @@
+The simple dogmatic perl install,
+
+	perl Makefile.PL
+	make
+	make test
+	make install
+
+will do the trick.
