@@ -1,0 +1,6 @@
+Revision history for Perl extension Data::EnCase::HashList.
+
+0.1  Wed Sep  4 10:08:45 2013
+	- original version; created by h2xs 1.23 with options
+		--omit-XS --name Data::EnCase::HashList --skip-exporter --version 0.1
+
