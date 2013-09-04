@@ -22,11 +22,11 @@ DEPENDENCIES
 
 This module requires these other modules and libraries:
 
-  Class::Accessor
+	Class::Accessor
 	Params::Validate
 	File::Basename (this is in your Core, or it should be...)
 
-COPYRIGHT AND LICENCE
+COPYRIGHT AND LICENSE
 
 Copyright (C) 2013 by Jane A Avriette
 
