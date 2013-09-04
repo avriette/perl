@@ -1,113 +1,3 @@
-package Data::EnCase::HashList::Hash;
-
-use 5.012004;
-use strict;
-use warnings;
-
-use base qw{ Class::Accessor };
-use Params::Validate qw{ :all };
-use File::Basename;
-use File::Slurp;
-use Scalar::Util qw{ blessed };
-
-our @ISA = qw();
-
-our $VERSION = '0.1';
-
-our @reqd_attributes = qw{
-	cksum
-	filename
-};
-
-our @attributes = qw {
-	fileid
-	directory
-	filesize
-	datemodified
-	timemodified
-	timezone
-	comments
-	dateaccessed
-	timeaccessed
-};
-
-our %template = map { $_ => '' } (@reqd_attributes, @attributes);
-
-=cut
-
-Specification for EnCase hashlist file taken from:
-
-http://www.nsrl.nist.gov/Documents/CreatingHashSetsmanually.pdf
-
-by Sharren Redmond
-
-=cut
-
-sub new {
-	my $class = shift;
-
-	validate( @_, { 
-		(map { $_ => { type => SCALAR, optional => 0 } } @reqd_attributes),
-		(map { $_ => { type => SCALAR, optional => 1 } } @attributes),
-	} );
-
-	my %object = %template;
-	my %args   = (@_);
-
-	# get default keys and values
-	foreach my $key (keys %template) {
-		if (defined $args{$key}) {
-			$object{$key} = $args{$key};
-		}
-		else {
-			$object{$key} = $template{$key};
-		}
-	}
-
-	# See File::Basename
-	my ($filename, $dirname) = fileparse( $object{filename} );
-
-	if (length $dirname and not length $object{directory}) {
-		$object{directory} = $dirname;
-		$object{filename}  = $filename;
-	}
-
-	$class->follow_best_practice();
-	$class->mk_ro_accessors( @reqd_attributes );
-	$class->mk_accessors( @attributes );
-
-	return bless \%object, $class;
-}
-
-sub new_from_cksum {
-	my $class = shift;
-
-	my @hashes;
-
-	# This should be an array of lines.
-	# It's ugly. I know. But it works, and it's quick. This should cover both
-	# Solaris and Linux and seems to work with Darwin.
-	foreach my $line (@_) {
-	  my $fn = substr $line, 5, (index $line, ')') - 5;
-	  my ($hash) = (split /\s+/, $line)[-1];
-	  if ($hash =~ /\//) {
-	    $fn = $hash;
-	    $hash = substr $line, 0, 32;
-	  }
-	  
-		# Validation happens in new() above
-		push @hashes, $class->new(
-			cksum => $hash,
-			filename => $fn,
-		) unless $hash =~ /[^a-f0-9]/;
-	}
-
-	# Note, this may be empty if your list of hashes was malformatted.
-	return \@hashes;
-}
-
-1;
-
 package Data::EnCase::HashList;
 
 use 5.012004;
@@ -129,10 +19,13 @@ our @reqd_attributes = qw{
 sub new {
 	my $class = shift;
 
+	my $hashes   = $_[0];
+	my $filename = $_[1];
+
 	$class->follow_best_practice();
 	$class->mk_ro_accessors( @reqd_attributes );
 
-	return bless { hashes => \@_, filename => '' }, $class;
+	return bless { hashes => $hashes, filename => $filename }, $class;
 }
 
 sub serialize {
@@ -140,12 +33,7 @@ sub serialize {
 		{
 			# self
 			type => OBJECT,
-			can  => 'get_hashes',
-		},
-		{
-			# what is the file name we are to write?
-			type => SCALAR,
-			optional => 0,
+			can  => qw{ get_hashes get_filename },
 		},
 	);
 
@@ -176,7 +64,7 @@ HEADER
 			$hash->get_hashsetid() eq $hash->get_fileid() ? $hash->get_hashsetid() : 1,
 			$hash->get_filename(),
 			$hash->get_directory(),
-			$hash->get_cksum(),
+			$hash->get_hash(),
 			$hash->get_filesize(),
 			$hash->get_datemodified(),
 			$hash->get_timemodified(),
@@ -188,7 +76,7 @@ HEADER
 		push @list, $line;
 	}
 
-	my %khe_attrs = (
+	my %hke_attrs = (
 		hashset_id         => $hke_fileid,
 		name               => blessed $self,
 		# JAA_perl-5.12.2
@@ -203,9 +91,38 @@ HEADER
 		date_loaded        => scalar localtime(time()),
 	);
 
+	my $hsh_name = $self->get_filename().".hsh";
+	my $hke_name = $hsh_name.".hke";
+
+	# The list of hashes
+	write_file( $hsh_name, 
+		$hsh_header,
+		@list,
+	)
+		or return undef;
+
+	# The "hash key" file
+	write_file( $hke_name,
+		$hke_header,
+		'"'.(join '","',@hke_attrs{ qw{
+			hashset_id
+			name
+			vendor
+			package
+			version
+			authenticated_flag
+			notable_flag
+			initials
+			num_of_files
+			description
+			date_loaded
+		} } ).'"',
+	)
+		or return undef;
+
+	return "Success!";
 
 }
-
 
 1;
 
@@ -237,9 +154,9 @@ Data::EnCase::HashList - Perl module to create EnCase hashsets
 
   use Data::EnCase::HashList;
 
-	my $set = Data::EnCase::HashList->new( @cksum_lines );
+	my $set = Data::EnCase::HashList->new( @hash_lines );
 	foreach my $hash ($set->get_hashes()) {
-		say $hash->get_cksum();
+		say $hash->get_hash();
 		say $hash->get_filename();
 		say $hash->get_fileid();
 		say $hash->get_directory();
@@ -255,11 +172,11 @@ Data::EnCase::HashList - Perl module to create EnCase hashsets
 
 =head1 DESCRIPTION
 
-Given an input of lines from cksum(1) on Unix (Linux, Darwin, and Solaris are
+Given an input of lines from md5(1) on Unix (Linux, Darwin, and Solaris are
 supported; others may work), this module will generate a container object that
 L<Data::EnCase::HashList::Hash> objects with the requisite fields sufficient 
 for producing an EnCase hashlist. Because Unix doesn't give us information 
-like timezone and comments from cksum, these are up to you to modify. EnCase 
+like timezone and comments from md5, these are up to you to modify. EnCase 
 doesn't mind if they're not there.
 
 =head1 AUTHOR
