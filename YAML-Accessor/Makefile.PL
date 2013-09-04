@@ -17,5 +17,5 @@ WriteMakefile(
 		'SUFFIX'   => 'gz',
 	},
 	ABSTRACT => 'A syntactical sugar wrapper for YAML::XS.',
-	AUTHOR   => 'Alex J. Avriette <alex@cpan.org>',
+	AUTHOR   => 'Jane A. Avriette <jane@cpan.org>',
 );

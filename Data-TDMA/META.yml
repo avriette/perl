@@ -4,7 +4,7 @@ version:             0.2
 abstract:            Teaching Implementation of TDMA networking protocol
 license:             ~
 author:              
-    - Alex J. Avriette (alex@cpan.org)
+    - Jane A. Avriette (jane@cpan.org)
 generated_by:        ExtUtils::MakeMaker version 6.42
 distribution_type:   module
 requires:     

@@ -7,6 +7,6 @@ WriteMakefile(
 	VERSION      => '0.2',
 	VERSION_FROM => 'lib/Data/TDMA.pm', # (this is an svn thing)
 	dist         => { COMPRESS => 'gzip -9f', SUFFIX => 'gz' },
-	AUTHOR       => 'Alex J. Avriette <alex@cpan.org>',
+	AUTHOR       => 'Jane A. Avriette <jane@cpan.org>',
 	ABSTRACT     => 'Time Division Multiple Access abstraction for perl. Deprecates Net::TDMA',
 );

@@ -16,4 +16,4 @@ $t->checkpoint( $_ ) for @friends;
 ok( $t->checkpoint( $_ ), "friend $_ had positive delta" )
 	for @friends;
 
-# aja // vim:tw=80:ts=2:noet:syntax=perl
+# jaa // vim:tw=80:ts=2:noet:syntax=perl

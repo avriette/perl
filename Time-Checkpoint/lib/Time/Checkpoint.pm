@@ -230,7 +230,7 @@ Removes all checkpoints.
 
 =head1 AUTHOR
 
-  Alex J. Avriette <alex@cpan.org>
+  Jane A. Avriette <jane@cpan.org>
 
 =head1 BUGS
 
@@ -238,4 +238,4 @@ Yep.
 
 =cut
 
-# aja // vim:tw=80:ts=2:noet
+# jaa // vim:tw=80:ts=2:noet

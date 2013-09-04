@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-#  Created by Alex J. Avriette on 2007-06-14.
+#  Created by Jane A. Avriette on 2007-06-14.
 #  Copyright (c) 2007. All rights reserved.
 #
 
@@ -52,4 +52,4 @@ ok( $delta > 0 );
 
 exit 0;
 
-# aja // vim: ts=2
+# jaa // vim: ts=2

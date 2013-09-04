@@ -12,7 +12,7 @@ WriteMakefile(
         'SUFFIX' => 'gz',
     },
     'VERSION'  => '0.35',
-    'AUTHOR'   => 'Alex Avriette (alex@cpan.org)',
+    'AUTHOR'   => 'Jane A. Avriette (jane@cpan.org)',
     'ABSTRACT' => 'Time-based checkpoints / deltas',
 );
 

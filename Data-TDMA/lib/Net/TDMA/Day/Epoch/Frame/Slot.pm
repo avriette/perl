@@ -68,5 +68,5 @@ add to it just about anything perl can create.
 
 =head1 AUTHOR
 
-	Alex J. Avriette
-	avriette@gmail.com
+	Jane A. Avriette
+	jane@cpan.org

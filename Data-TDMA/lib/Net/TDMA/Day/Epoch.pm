@@ -74,5 +74,5 @@ into: 64 individual I<frames>.
 	
 =head1 AUTHOR
 
-	Alex J. Avriette
-	alex@cpan.org
+	Jane A. Avriette
+	jane@cpan.org

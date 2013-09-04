@@ -193,5 +193,5 @@ This stuff should be in the Net::TDMA module.
 
 =head1 AUTHOR
 
-	Alex J. Avriette
-  alex@cpan.org
+	Jane A. Avriette
+  jane@cpan.org

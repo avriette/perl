@@ -29,4 +29,4 @@ my $delta = $t->checkpoint( 'pie' );
 ok( defined $delta, "delta returned" );
 ok( $delta > 1, "delta was big enough" );
 
-# aja // vim:tw=80:ts=2:noet:syntax=perl
+# jaa // vim:tw=80:ts=2:noet:syntax=perl
