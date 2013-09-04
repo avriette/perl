@@ -129,14 +129,6 @@ our @reqd_attributes = qw{
 sub new {
 	my $class = shift;
 
-	foreach my $arg (@_) { 
-		validate( $arg, 
-			{ 
-				type => OBJECT, 
-				can => [ qw{ get_filename get_cksum } ],
-			}
-		);
-	}
 	$class->follow_best_practice();
 	$class->mk_ro_accessors( @reqd_attributes );
 
@@ -144,7 +136,7 @@ sub new {
 }
 
 sub serialize {
-	validate( @_,
+	validate_pos( @_,
 		{
 			# self
 			type => OBJECT,
@@ -161,13 +153,13 @@ sub serialize {
 
 	my $hke_fileid;
 	
-	my $hsh_header = <<"HEADER"
+	my $hsh_header = <<"HEADER";
 "file_id","hashset_id","file_name","directory","hash","file_size","date_modified","time_modified","time_zone","comments","date_accessed","time_accessed"
 
 
 HEADER
  
-	my $hke_header = <<"HEADER"
+	my $hke_header = <<"HEADER";
 "hashset_id","name","vendor","package","version","authenicated_flag","notable_flag","initials","num_of_files","description","date_loaded"
 
 
