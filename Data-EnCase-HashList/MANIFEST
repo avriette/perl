@@ -6,3 +6,6 @@ lib/Data/EnCase/HashList.pm
 t/01-hashlist-use.t
 t/02-hashlist-hash-use.t
 t/03-hashlist-new.t
+data/darwin_md5.txt
+data/linux_md5.txt
+data/solaris_md5.txt
