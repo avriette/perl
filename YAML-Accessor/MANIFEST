@@ -11,4 +11,3 @@ t/01_constructor.t
 t/02_accessors.t
 t/03_sub_accessors.t
 t/04_mutate.t
-t/05_refresh.t
