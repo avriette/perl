@@ -1,13 +1,10 @@
 package Data::EnCase::HashList;
 
 use 5.012004;
-use strict;
 use warnings;
 
 use base qw{ Class::Accessor };
 use Params::Validate qw{ :all };
-
-our @ISA = qw();
 
 our $VERSION = '0.1';
 

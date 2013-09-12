@@ -1,7 +1,6 @@
 package Data::EnCase::HashList::Hash;
 
-use 5.012004;
-use strict;
+use 5.12.0;
 use warnings;
 
 use base qw{ Class::Accessor };
@@ -9,8 +8,6 @@ use Params::Validate qw{ :all };
 use File::Basename;
 use File::Slurp;
 use Scalar::Util qw{ blessed };
-
-our @ISA = qw();
 
 our $VERSION = '0.1';
 
@@ -45,6 +42,8 @@ by Sharren Redmond
 
 sub new {
 	my $class = shift;
+
+	# die "@_\n";
 
 	validate( @_, { 
 		(map { $_ => { type => SCALAR, optional => 0 } } @reqd_attributes),
