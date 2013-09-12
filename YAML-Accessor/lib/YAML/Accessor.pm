@@ -1,6 +1,6 @@
 package YAML::Accessor;
 
-require 5.10.0;
+use 5.10.0;
 
 use feature qw{ state };
 use base qw{ Class::Accessor };
