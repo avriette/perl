@@ -2,7 +2,7 @@ Data-EnCase-HashList version 0.1
 ================================
 
 It became apparent to me that it might be useful to have a tool to convert
-long lists of hashes produced by e.g., cksum(1) into something that EnCase can
+long lists of hashes produced by e.g., md5sum(1) into something that EnCase can
 use.
 
 This is just that, in a perl module, so that I can write a "front-end" for it
@@ -13,18 +13,23 @@ INSTALLATION
 
 To install this module type the following:
 
-   perl Makefile.PL
-   make
-   make test
-   make install
+    perl Makefile.PL
+    make
+    make test
+    make install
 
 DEPENDENCIES
 
 This module requires these other modules and libraries:
 
-	Class::Accessor
-	Params::Validate
-	File::Basename (this is in your Core, or it should be...)
+    Class::Accessor
+    Params::Validate
+
+Stuff that should be in your Core:
+
+    File::Basename
+    Scalar::Util
+    File::Slurp;
 
 COPYRIGHT AND LICENSE
 
@@ -33,3 +38,5 @@ Copyright (C) 2013 by Jane A Avriette
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.12.4 or,
 at your option, any later version of Perl 5 you may have available.
+
+# jaa // vim:tw=80:ts=4:et
