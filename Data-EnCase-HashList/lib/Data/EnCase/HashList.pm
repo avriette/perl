@@ -1,6 +1,6 @@
 package Data::EnCase::HashList;
 
-use 5.012004;
+use 5.12.0;
 use warnings;
 
 use base qw{ Class::Accessor };

@@ -19,3 +19,7 @@ my @objects = Data::EnCase::HashList::Hash->new_from_md5( @md5_lines );
 my $hl = Data::EnCase::HashList->new( \@objects, 'darwinhashes.txt' );
 
 print Dumper( $hl );
+
+warn "serializing, yo\n";
+
+$hl->serialize();
