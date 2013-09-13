@@ -5,6 +5,8 @@ use warnings;
 
 use base qw{ Class::Accessor };
 use Params::Validate qw{ :all };
+use Scalar::Util qw{ blessed };
+use File::Slurp;
 
 our $VERSION = '0.1';
 
@@ -19,9 +21,13 @@ sub new {
 	my $hashes   = $_[0];
 	my $filename = $_[1];
 
+	use Data::Dumper; print Dumper $hashes;
+
 	$class->follow_best_practice();
 	$class->mk_ro_accessors( @reqd_attributes );
 
+	# wht in the hell is happening here that this is a ref?
+	my $sh = shift @{ $hashes };
 	return bless { hashes => $hashes, filename => $filename }, $class;
 }
 
@@ -30,7 +36,7 @@ sub serialize {
 		{
 			# self
 			type => OBJECT,
-			can  => qw{ get_hashes get_filename },
+			can  => [ qw{ get_hashes get_filename } ],
 		},
 	);
 
@@ -50,6 +56,7 @@ HEADER
 
 HEADER
 
+	use Data::Dumper; print Dumper $self;
 	my @list = ( );
 	foreach my $hash (@{ $self->get_hashes() }) {
 		if (not defined $hke_fileid) {
@@ -70,11 +77,12 @@ HEADER
 			$hash->get_dateaccessed(),
 			$hash->get_timeaccessed(),
 		).'"';
+		warn "pushed a hash\n";
 		push @list, $line;
 	}
 
 	my %hke_attrs = (
-		hashset_id         => $hke_fileid,
+		hashset_id         => defined $hke_fileid ? $hke_fileid : 1,
 		name               => blessed $self,
 		# JAA_perl-5.12.2
 		vendor             => 'JAA'.'_'.$^X.'-'.$^V,
@@ -94,7 +102,7 @@ HEADER
 	# The list of hashes
 	write_file( $hsh_name, 
 		$hsh_header,
-		@list,
+		( join "\n", @list ),
 	)
 		or return undef;
 

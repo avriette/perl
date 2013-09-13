@@ -43,8 +43,6 @@ by Sharren Redmond
 sub new {
 	my $class = shift;
 
-	# die "@_\n";
-
 	validate( @_, { 
 		(map { $_ => { type => SCALAR, optional => 0 } } @reqd_attributes),
 		(map { $_ => { type => SCALAR, optional => 1 } } @attributes),
@@ -103,7 +101,7 @@ sub new_from_md5 {
 	}
 
 	# Note, this may be empty if your list of hashes was malformatted.
-	return \@hashes;
+	return [ @hashes ];
 }
 
 1;
