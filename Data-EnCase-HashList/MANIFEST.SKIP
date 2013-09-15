@@ -1,6 +1,8 @@
 .*\.~\d~
 .*\.bak
 .*\.swp
+.*\.swn
+.*\.swo
 .*\.tar(\.gz)?
 \.bzr
 \.bzrignore
