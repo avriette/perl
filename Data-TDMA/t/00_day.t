@@ -13,12 +13,12 @@ use Test::More qw{ no_plan };
 
 use lib qw{ . lib };
 
-use_ok( 'Net::TDMA' );
-use Net::TDMA::Constants qw{ :all } ; # XXX: use_ok doesn't like qw{ } 
-use_ok( 'Net::TDMA::Day' );
-use_ok( 'Net::TDMA::Day::Epoch' );
-use_ok( 'Net::TDMA::Day::Epoch::Frame' );
-use_ok( 'Net::TDMA::Day::Epoch::Frame::Slot' );
+use_ok( 'Data::TDMA' );
+use Data::TDMA::Constants qw{ :all } ; # XXX: use_ok doesn't like qw{ } 
+use_ok( 'Data::TDMA::Day' );
+use_ok( 'Data::TDMA::Day::Epoch' );
+use_ok( 'Data::TDMA::Day::Epoch::Frame' );
+use_ok( 'Data::TDMA::Day::Epoch::Frame::Slot' );
 
 use Time::HiRes;
 
@@ -27,7 +27,7 @@ my $now = time();
 
 warn "\nThis may take a while.\n";
 ok(
-	my $day = Net::TDMA::Day->new( {
+	my $day = Data::TDMA::Day->new( {
 			zeroh  => time(), 
 			omegah => time() + 86400
 		}
@@ -42,7 +42,7 @@ ok( $delta > 0 );
 warn "\nThis, too, may take a while.\n";
 
 $now = time();
-ok( $day = Net::TDMA::Day->new( {} ) );
+ok( $day = Data::TDMA::Day->new( {} ) );
 $delta = time() - $now;
 diag( "The arbitrarily constructed day took $delta seconds to complete." );
 diag( "Nominally this would take place in 1/32 of a second, or .031s." );

@@ -1,11 +1,11 @@
-package Net::TDMA::Day;
+package Data::TDMA::Day;
 
 use warnings;
 use strict;
 
-use Net::TDMA;
-use Net::TDMA::Day::Epoch;
-use Net::TDMA::Constants qw{ :all };
+use Data::TDMA;
+use Data::TDMA::Day::Epoch;
+use Data::TDMA::Constants qw{ :all };
 
 use Time::HiRes qw{ time };
 
@@ -49,15 +49,15 @@ This section here is where the "day" object are assembled
 =cut
 
 	if ($zeroh and $omegah) {
-		Net::TDMA::Constants->_init();
-		my $enum   = Net::TDMA::Day::Epoch::delta_to_epochs( $zeroh, $omegah );
+		Data::TDMA::Constants->_init();
+		my $enum   = Data::TDMA::Day::Epoch::delta_to_epochs( $zeroh, $omegah );
 	  return _day_build( $zeroh, $omegah, $enum );
 	}
 	else { # we just got {} or nonsense
-		Net::TDMA::Constants->_init();
+		Data::TDMA::Constants->_init();
 		my $estart = time();
-		my $efins  = $estart + $Net::TDMA::Constants::SECONDS_PER_DAY;
-		my $enum   = Net::TDMA::Day::Epoch::delta_to_epochs( $estart, $efins );
+		my $efins  = $estart + $Data::TDMA::Constants::SECONDS_PER_DAY;
+		my $enum   = Data::TDMA::Day::Epoch::delta_to_epochs( $estart, $efins );
 	  return _day_build( $estart, $efins, $enum );
 	}
 
@@ -74,7 +74,7 @@ sub _day_build {
 	my @epochs;
 
 	# think a little
-	for (my $e = 1; $e < $enum; push @epochs, Net::TDMA::Day::Epoch->new( $zeroh, $e++ ) ) { }
+	for (my $e = 1; $e < $enum; push @epochs, Data::TDMA::Day::Epoch->new( $zeroh, $e++ ) ) { }
 
 	my $day = bless [ 
 		$zeroh,      # And we should be able to ask $day the beginning of
@@ -98,7 +98,7 @@ sub get_epoch        { my ($s, $n) = (@_); return $s->[2]->[$n] }
 # which slice from there, and so on. So this method seems obvious, but
 # is more sinister.
 sub get_time {
-	carp "Net::TDMA::Epoch::get_time() is more appropriate here.";
+	carp "Data::TDMA::Epoch::get_time() is more appropriate here.";
 	undef;
 }
 
@@ -106,16 +106,16 @@ sub get_time {
 
 =head1 NAME
 
-Net::TDMA::Day
+Data::TDMA::Day
 
 =head1 ABSTRACT
 
-Net::TDMA::Day provides the basis for the TDMA communications protocol. Each day
+Data::TDMA::Day provides the basis for the TDMA communications protocol. Each day
 in a TDMA link is composed of 112.5 I<epochs>.
 
 =head1 USAGE
 
-	my $tdma_day = Net::TDMA::Day->new(); # no arguments
+	my $tdma_day = Data::TDMA::Day->new(); # no arguments
 
 Your new day will actually have 113 I<epochs> in it, as opposed to giving you 
 112.5, which is more "correct," but far less practical. At the intersection 

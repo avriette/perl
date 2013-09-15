@@ -1,7 +1,7 @@
-package Net::TDMA;
+package Data::TDMA;
 
-use Net::TDMA::Constants qw{ :all };
-use Net::TDMA::Day;
+use Data::TDMA::Constants qw{ :all };
+use Data::TDMA::Day;
 
 use warnings;
 use strict;
@@ -15,8 +15,8 @@ sub new {
 	my $d = shift;
 	
 	# Straight outta perlobj.
-	croak "Net::TDMA objects start with a day. Provide one."
-		unless (blessed($d)) and $d->isa( 'Net::TDMA::Day');
+	croak "Data::TDMA objects start with a day. Provide one."
+		unless (blessed($d)) and $d->isa( 'Data::TDMA::Day');
 	
 	return bless [ [ $d ] ], __PACKAGE__;
 
@@ -158,7 +158,7 @@ sub time_to_slot {
 
 =head1 NAME
 
-Net::TDMA
+Data::TDMA
 
 =head1 ABSTRACT
 
@@ -168,11 +168,11 @@ A module to communicate TDMA with perl.
 
 See the sub-modules, 
 
-	L<Net::TDMA::Constants>
-	L<Net::TMDA::Day>
-	L<Net::TDMA::Day::Epoch>
-	L<Net::TDMA::Day::Epoch::Frame>
-	L<Net::TDMA::Day::Epoch::Frame::Slot>
+	L<Data::TDMA::Constants>
+	L<Data::TMDA::Day>
+	L<Data::TDMA::Day::Epoch>
+	L<Data::TDMA::Day::Epoch::Frame>
+	L<Data::TDMA::Day::Epoch::Frame::Slot>
 
 It may also be useful to view the various cryptograhic modules
 which can be useful with this set of modules, as well as L<Time::HiRes>
@@ -246,7 +246,7 @@ and also very difficult to jam.
 
 Additional measures can be taken to make TDMA further robust or more
 secure, but they are beyond the scope of this document. You may find
-more at L<Net::TDMA::Constants>
+more at L<Data::TDMA::Constants>
 
 TDMA however is generally not applied to on-wire technology, and is
 instead broadcast over radio networks. Many assumptions could be made
@@ -266,8 +266,8 @@ do this.
 	# So its instantiation should begin with a fresh "Day" object.
 	
 	my $now    = time();
-	my $today  = Net::TDMA::Day->new( $now, $now + 86400 );
-	my $tdma   = Net::TDMA->new( $today );
+	my $today  = Data::TDMA::Day->new( $now, $now + 86400 );
+	my $tdma   = Data::TDMA->new( $today );
 	
 	# From here, you can interrogate your $day objects. Hopefully
 	# you don't have too many, because memory will get full. Fast.

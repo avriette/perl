@@ -1,4 +1,4 @@
-package Net::TDMA::Constants;
+package Data::TDMA::Constants;
 
 require Exporter;
 
@@ -68,7 +68,7 @@ sub new {
 
 =head1 NAME
 
-Net::TDMA::Constants
+Data::TDMA::Constants
 
 =head1 ABSTRACT
 
@@ -77,9 +77,9 @@ may then be used by other pieces of the TDMA structure.
 
 =head1 USAGE
 
-	use Net::TDMA::Constants;
+	use Data::TDMA::Constants;
 	
-	Net::TDMA::Constants->frame_configure(
+	Data::TDMA::Constants->frame_configure(
 		{
 			add_methods => {
 				method_name => \&method_name,
@@ -94,7 +94,7 @@ may then be used by other pieces of the TDMA structure.
 	
 	# a practical example
 	
-	Net::TDMA::Constants::slot_configure(
+	Data::TDMA::Constants::slot_configure(
 		add_data   => {
 			jitter      => 0,  # a default
 			propagation => 0,  # a default
@@ -189,7 +189,7 @@ as "documentation" to the receiver – not current information.
 
 =head1 BUGS
 
-This stuff should be in the Net::TDMA module.
+This stuff should be in the Data::TDMA module.
 
 =head1 AUTHOR
 

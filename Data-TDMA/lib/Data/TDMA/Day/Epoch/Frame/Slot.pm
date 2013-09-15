@@ -1,4 +1,4 @@
-package Net::TDMA::Day::Epoch::Frame::Slot;
+package Data::TDMA::Day::Epoch::Frame::Slot;
 
 # this whole business may not be necessary.
 use vars qw{ $augment };
@@ -31,7 +31,7 @@ sub get_payload { my $self = shift; return $self->[2] }
 
 =head1 NAME
 
-Net::TDMA::Day::Epoch::Frame::Slot
+Data::TDMA::Day::Epoch::Frame::Slot
 
 =head1 ABSTRACT
 
@@ -40,7 +40,7 @@ The TDMA slot is the most basic component of the network. It is roughly
 
 =head1 USAGE
 
-	my $tdma_slot = Net::TDMA::Day::Epoch::Frame::Slot->new(); # no arguments
+	my $tdma_slot = Data::TDMA::Day::Epoch::Frame::Slot->new(); # no arguments
 
 =head3 A pinch of reality
 

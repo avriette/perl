@@ -1,7 +1,7 @@
-package Net::TDMA::Day::Epoch::Frame;
+package Data::TDMA::Day::Epoch::Frame;
 
-use Net::TDMA::Day::Epoch::Frame::Slot;
-use Net::TDMA::Constants qw{ :all };
+use Data::TDMA::Day::Epoch::Frame::Slot;
+use Data::TDMA::Constants qw{ :all };
 
 use warnings;
 use strict;
@@ -20,7 +20,7 @@ sub new {
 	my $this_frame = $zeroh;
 	
 	foreach my $slot_num (1 .. $SLOTS_PER_FRAME) {
-		my $slot = Net::TDMA::Day::Epoch::Frame::Slot->new(
+		my $slot = Data::TDMA::Day::Epoch::Frame::Slot->new(
 			$this_frame,
 			$slot_num,
 			# no payload
@@ -44,7 +44,7 @@ sub get_end   { my $self = shift; return $self->[1]->[$_[-1]]->get_time() }
 
 =head1 NAME
 
-Net::TDMA::Day::Epoch::Frame
+Data::TDMA::Day::Epoch::Frame
 
 =head1 ABSTRACT
 

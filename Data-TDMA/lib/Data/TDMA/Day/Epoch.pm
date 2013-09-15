@@ -1,7 +1,7 @@
-package Net::TDMA::Day::Epoch;
+package Data::TDMA::Day::Epoch;
 
-use Net::TDMA::Day::Epoch::Frame;
-use Net::TDMA::Constants qw{ :all };
+use Data::TDMA::Day::Epoch::Frame;
+use Data::TDMA::Constants qw{ :all };
 
 use POSIX qw{ floor };
 
@@ -12,7 +12,7 @@ use Carp qw{ confess cluck carp };
 
 sub new {
 	my ($class, $zeroh, $epoch_num) = (@_);
-	Net::TDMA::Constants->_init();
+	Data::TDMA::Constants->_init();
 	confess unless $zeroh and $EPOCHS_PER_DAY and $epoch_num;
 	my $epoch_start = ( $zeroh / $EPOCHS_PER_DAY ) * $epoch_num;
 	
@@ -22,7 +22,7 @@ sub new {
 		
 		# this is the real object here...
 		[ 
-			map Net::TDMA::Day::Epoch::Frame->new( 
+			map Data::TDMA::Day::Epoch::Frame->new( 
 				$zeroh, $epoch_start, $epoch_num, $_ 
 			), 
 			1 .. $FRAMES_PER_EPOCH 
@@ -61,16 +61,16 @@ sub delta_to_epochs {
 
 =head1 NAME
 
-Net::TDMA::Day::Epoch
+Data::TDMA::Day::Epoch
 
 =head1 ABSTRACT
 
-Net::TDMA::Day::Epoch provides the individual slices each TDMA epoch is separated
+Data::TDMA::Day::Epoch provides the individual slices each TDMA epoch is separated
 into: 64 individual I<frames>.
 
 =head1 USAGE
 
-	my $tdma_epoch = Net::TDMA::Day::Epoch->new(); # no arguments
+	my $tdma_epoch = Data::TDMA::Day::Epoch->new(); # no arguments
 	
 =head1 AUTHOR
 
