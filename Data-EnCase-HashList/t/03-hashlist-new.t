@@ -46,8 +46,9 @@ f5078cf9df66751dec9ae8f7baf4a0c2  /etc/init.d/grub-common
 EOS
 
 foreach my $var ($darwin_string, $linux_string, $solaris_string) {
-	my $hl = Data::EnCase::HashList->new( [
-		Data::EnCase::HashList::Hash->new_from_md5( $var )
-	] );
+	my $hl = Data::EnCase::HashList->new(
+		[ Data::EnCase::HashList::Hash->new_from_md5( $var ) ],
+		'test_output',
+	);
 	ok($hl)
 }

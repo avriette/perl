@@ -14,7 +14,7 @@ my @md5_lines = read_file( qw{ data/darwin_md5.txt } );
 
 my @objects = Data::EnCase::HashList::Hash->new_from_md5( @md5_lines );
 
-# print Dumper( \@objects );
+print Dumper( \@objects );
 
 my $hl = Data::EnCase::HashList->new( \@objects, 'darwinhashes.txt' );
 

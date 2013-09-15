@@ -7,6 +7,7 @@ use base qw{ Class::Accessor };
 use Params::Validate qw{ :all };
 use Scalar::Util qw{ blessed };
 use File::Slurp;
+use Carp qw{ confess };
 
 our $VERSION = '0.1';
 
@@ -15,19 +16,28 @@ our @reqd_attributes = qw{
 	filename
 };
 
+our @opt_attributes = qw{ hashsetid };
+
 sub new {
 	my $class = shift;
+
+	validate_pos( @_,
+		{
+			type => ARRAYREF,
+			optional => 0,
+		},
+		{
+			type => SCALAR,
+			optional => 0,
+		},
+	);
 
 	my $hashes   = $_[0];
 	my $filename = $_[1];
 
-	use Data::Dumper; print Dumper $hashes;
-
 	$class->follow_best_practice();
-	$class->mk_ro_accessors( @reqd_attributes );
+	$class->mk_ro_accessors( @reqd_attributes, @opt_attributes );
 
-	# wht in the hell is happening here that this is a ref?
-	my $sh = shift @{ $hashes };
 	return bless { hashes => $hashes, filename => $filename }, $class;
 }
 
@@ -56,16 +66,26 @@ HEADER
 
 HEADER
 
-	use Data::Dumper; print Dumper $self;
 	my @list = ( );
 	foreach my $hash (@{ $self->get_hashes() }) {
+		# this trickiness is because p::v is weird about this call.
+		validate_pos( @{ [ $hash ] },
+			{
+				type => OBJECT,
+				can  => [ qw{ 
+					get_filename get_directory
+					get_hash get_filesize get_datemodified get_timemodified get_timezone
+					get_comments get_dateaccessed get_timeaccessed
+				} ],
+			},
+		);
 		if (not defined $hke_fileid) {
 			$hke_fileid = $hash->get_fileid() ? $hash->get_fileid : 1;
 		}
 		# Note, these default to the empty string, which is okay with EnCase.
 		my $line = '"'. (join '","', 
 			length $hash->get_fileid() ? $hash->get_fileid : 1,
-			$hash->get_hashsetid() eq $hash->get_fileid() ? $hash->get_hashsetid() : 1,
+			$self->get_hashsetid() eq $hash->get_fileid() ? $self->get_hashsetid() : 1,
 			$hash->get_filename(),
 			$hash->get_directory(),
 			$hash->get_hash(),

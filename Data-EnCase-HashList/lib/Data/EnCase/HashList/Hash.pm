@@ -80,28 +80,15 @@ sub new {
 sub new_from_md5 {
 	my $class = shift;
 
-	my @hashes;
-
-	# This should be an array of lines.
 	# It's ugly. I know. But it works, and it's quick. This should cover both
 	# Solaris and Linux and seems to work with Darwin.
-	foreach my $line (@_) {
-	  my $fn = substr $line, 5, (index $line, ')') - 5;
-	  my ($hash) = (split /\s+/, $line)[-1];
-	  if ($hash =~ /\//) {
-	    $fn = $hash;
-	    $hash = substr $line, 0, 32;
-	  }
-	  
-		# Validation happens in new() above
-		push @hashes, $class->new(
-			hash => $hash,
-			filename => $fn,
-		) unless $hash =~ /[^a-f0-9]/;
-	}
+	return map {
+		my $fn = substr $_, 5, (index $_, ')') - 5;
+		my ($hash) = (split /\s+/, $_)[-1];
+		if ($hash =~ /\//) { $fn = $hash; $hash = substr $_, 0, 32; }
 
-	# Note, this may be empty if your list of hashes was malformatted.
-	return [ @hashes ];
+		$class->new( hash => $hash, filename => $fn, );
+	} (@_);
 }
 
 1;
