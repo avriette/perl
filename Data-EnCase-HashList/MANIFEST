@@ -3,6 +3,7 @@ MANIFEST
 Makefile.PL
 README
 lib/Data/EnCase/HashList.pm
+lib/Data/EnCase/HashList/Hash.pm
 t/01-hashlist-use.t
 t/02-hashlist-hash-use.t
 t/03-hashlist-new.t
