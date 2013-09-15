@@ -9,3 +9,4 @@ t/03-hashlist-new.t
 data/darwin_md5.txt
 data/linux_md5.txt
 data/solaris_md5.txt
+examples/darwin_to_encase.pl
