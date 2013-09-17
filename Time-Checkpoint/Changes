@@ -10,3 +10,6 @@ Version 0.1 - Sun Oct  9 03:24:58 EDT 2011
 
 Version 0.35 - See above version.
 	Consolidated a versioning error on PAUSE (which was my fault, I guess.)
+
+Version 0.36 - Updated attribution
+	Removed common::sense
