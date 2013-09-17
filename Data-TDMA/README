@@ -1,4 +1,16 @@
-Net::TDMA "works," as-is, but is kind of crummy. I am not sure what possessed 
+#
+# Do not use this software. I may actually fix it at some point in the future.
+# I don't need bug reports. It won't run tests properly on systems that can't
+# allocate $largesum of memory (if you're on a 32-bit system, it's not
+# happening). The epoch is off by half a thirty-second of a second (yeah).
+#
+# I have kept this on the CPAN instead of deleting it outright because it has
+# shown useful for people trying to figure out how TDMA and LINK-16 (and
+# JTIDS) actually works.
+#
+
+
+Data::TDMA "works," as-is, but is kind of crummy. I am not sure what possessed 
 me to write it the way it's written. I wrote it after I knew about things
 like Class::Accessor and Params::Validate. I wrote it before I knew about
 things like Moose and friends, but still, the code is just... egregiously
