@@ -1,7 +1,6 @@
 package Time::Checkpoint;
 
-# I don't like him either, but i do like what this code does.
-use common::sense;
+use 5.12.0;
 
 use feature qw{ state };
 
@@ -55,7 +54,7 @@ sub checkpoint {
 		my $ot = $self->[IDX_CKPOINTS]->{$cp};
 		my $nt = time;
 		if ($self->[IDX_CALLBACK]) {
-			$self->[IDX_CALLBACK]->( $cp, $ot, $nt );
+			$self->[IDX_CALLBACK]->( $cp, $self->[IDX_CKPOINTS]->{$cp}, $nt );
 		}
 		$self->[IDX_CKPOINTS]->{$cp} = $nt;
 		return $nt - $ot;
