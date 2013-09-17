@@ -52,6 +52,7 @@ sub new {
 	my %args   = (@_);
 
 	# get default keys and values
+	# there are better ways to do this. one day i'll fix it.
 	foreach my $key (keys %template) {
 		if (defined $args{$key}) {
 			$object{$key} = $args{$key};

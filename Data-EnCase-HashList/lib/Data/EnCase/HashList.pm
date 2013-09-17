@@ -22,23 +22,33 @@ sub new {
 	my $class = shift;
 
 	validate_pos( @_,
+		# hashes
 		{
 			type => ARRAYREF,
 			optional => 0,
 		},
+		# filename
 		{
 			type => SCALAR,
 			optional => 0,
 		},
+		# hashsetid
+		{
+			type => SCALAR,
+			optional => 1,
+		},
 	);
 
-	my $hashes   = $_[0];
-	my $filename = $_[1];
+	my ($hashes, $filename, $hashsetid) = (@_);
 
 	$class->follow_best_practice();
 	$class->mk_ro_accessors( @reqd_attributes, @opt_attributes );
 
-	return bless { hashes => $hashes, filename => $filename }, $class;
+	return bless { 
+		hashes => $hashes, 
+		filename => $filename,
+		hashsetid => defined $hashsetid ? $hashsetid : 1,
+	}, $class;
 }
 
 sub serialize {
@@ -82,6 +92,7 @@ HEADER
 		if (not defined $hke_fileid) {
 			$hke_fileid = $hash->get_fileid() ? $hash->get_fileid : 1;
 		}
+
 		# Note, these default to the empty string, which is okay with EnCase.
 		my $line = '"'. (join '","', 
 			length $hash->get_fileid() ? $hash->get_fileid : 1,
