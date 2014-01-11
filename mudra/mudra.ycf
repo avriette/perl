@@ -1,0 +1,12 @@
+control :
+  server   : irc.freenode.net
+  port     : 6697
+  ssl      : yes
+  realname : This Gigantic Robot Kills
+  authnick : mudra
+  authpass : mudra_the_lovely_bot
+  nick     : mudra
+  ircname  : mudra
+
+  control_channel : "#dicks"
+
