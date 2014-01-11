@@ -7,7 +7,7 @@ use File::Slurp qw{ read_file };
 
 # line one is your access key
 # line two is your secret key
-my @creds = read_file( 'aws_creds.txt' );
+my @creds = map { chomp and $_ } read_file( 'aws_creds.txt' );
 
 my $access_key = $creds[0]; # AWS Access Key ID
 my $secret_key = $creds[1]; # AWS Secret Key
