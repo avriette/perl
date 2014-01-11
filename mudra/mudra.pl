@@ -25,7 +25,7 @@ my $yc = YAML::Accessor->new(
 =cut
 
 control :
-  server   : irc.tripsit.me
+  server   : irc.freenode.net
   port     : 6697
   ssl      : yes
   realname : This Gigantic Robot Kills

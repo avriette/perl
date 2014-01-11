@@ -4,9 +4,9 @@ control :
   ssl      : yes
   realname : This Gigantic Robot Kills
   authnick : mudra
-  authpass : mudra_the_lovely_bot
+  authpass : #####
   nick     : mudra
   ircname  : mudra
 
-  control_channel : "#dicks"
+  control_channel : "##mudra"
 
