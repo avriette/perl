@@ -15,6 +15,6 @@ client.addListener('error', function(message) {
 
 // this is basically like _default from P::C::IRC, right?
 client.addListener( 'raw', function(message) {
-	
-
+	console.log( 'raw received: ' + message.command + ' ' + message.args + "\n" );
+	// mmmmmmhm.
 });
