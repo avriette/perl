@@ -1,7 +1,7 @@
 # So there’s this javascript code in your perl directory
 Yeah. About that. I keep trying to write perl and I keep going, *god, this is awful, why is perl still so, bleh, baroque or something?* I mean, I love perl. A lot. I really, really do. I’ve written tens upon tens of thousands of lines of perl code in the twenty years I have been hacking perl.
 
-But it hasn’t changed. At all. Well, I mea, it’s changed a little. But it’s not the sexy language that, say, [node](https://www.nodejs.org/) and [ruby](https://www.ruby-lang.org/‎) are. Perl’s package management system (and build system!) feel like they’re well over ten years old. *Because they are!*
+But it hasn’t changed. At all. Well, I mean, it’s changed a little. But it’s not the sexy language that, say, [node](https://www.nodejs.org/) and [ruby](https://www.ruby-lang.org/‎) are. Perl’s package management system (and build system!) feel like they’re well over ten years old. *Because they are!*
 
 Plus, I already know perl. So I’m taking this “mudra” project, and I’m writing bits and pieces of it in node – I may write *all* of it in node – and hopefully this results in my being moderately familiar with the language.
 
