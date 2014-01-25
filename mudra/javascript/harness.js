@@ -1,12 +1,34 @@
 // this is the groundwork for the js message queue event generator for mudra
 
+/*
+ *
+ * CONFIG PARSING
+ *
+ */
+
 /* Your sasl.json looks like:
 {
 	"saslpassword" : "i#like#22/7",
 	"saslnick"     : "mudra"
 }
 */
-var config = require('./sasl.json');
+var saslconfig = require('./sasl.json');
+
+/* Your aws.json looks like:
+{
+	"accessKeyId": "AKadlkjasdlkajsd",
+	"secretAccessKey": "adlkjasdlja/slj/qa",
+	"region": "us-west-2"
+}
+*/
+var AWS = require('aws-sdk');
+AWS.config.loadFromPath('./aws.json');
+
+/*
+ *
+ * IRC INSTANTIATION
+ *
+ */
 
 // instantiate the bot
 var irc = require('irc');
@@ -30,8 +52,8 @@ var client = new irc.Client('irc.freenode.net', 'mudra', {
 
 	// sasl auth -- see above re json file
 	sasl        : true,
-	userName    : config.saslnick,
-	password    : config.saslpassword
+	userName    : saslconfig.saslnick,
+	password    : saslconfig.saslpassword
 
 	/*
 	floodProtection : false,
@@ -50,4 +72,24 @@ client.addListener('error', function(message) {
 // the raw listener here can basically be ignored if debug is set to true above.
 client.addListener( 'raw', function(message) {
 	// console.log( 'raw received: ' + message.command + ' ' + message.args + "\n" );
+});
+
+/*
+ *
+ * AWS SQS INSTANTIATION
+ *
+ */
+
+// this is rote from the aws docs. See:
+//   http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/frames.html
+var sqs = new AWS.SQS();
+sqs.getQueueAttributes(params, function (err, data) {
+	if (err) {
+		// an error occurred
+		console.log(err); 
+	}
+	else {
+		// successful response
+		console.log(data);
+	}
 });
