@@ -22,11 +22,12 @@ var saslconfig = require('./sasl.json');
 }
 */
 var AWS = require('aws-sdk');
+var SQS = require('aws-sqs');
+awsconfig = require('./aws.json');
 AWS.config.loadFromPath('./aws.json');
 
-/*
+/* IRC INSTANTIATION {{{
  *
- * IRC INSTANTIATION
  *
  */
 
@@ -74,12 +75,30 @@ client.addListener( 'raw', function(message) {
 	// console.log( 'raw received: ' + message.command + ' ' + message.args + "\n" );
 });
 
-/*
+// }}}
+
+/* AWS SQS INSTANTIATION {{{
  *
- * AWS SQS INSTANTIATION
- *
+ *   (but seriously, fuck amazon's api for sqs.)
  */
 
+// this is aws-sqs, via:
+//   https://github.com/onmodulus/aws-sqs
+var sqs = new SQS( awsconfig.accessKeyId, awsconfig.secretAccessKey );
+sqs.createQueue( 'psmurf', { }, function(err, res) {
+	if (err) {
+		// something something err
+	}
+	console.log(res);
+});
+
+sqs.deleteQueue( 'psmurf', function(err) {
+	if (err) {
+		// gosh. what happened?
+		console.log(err);
+	}
+});
+/*
 // this is rote from the aws docs. See:
 //   http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/frames.html
 var sqs = new AWS.SQS();
@@ -92,4 +111,6 @@ sqs.getQueueAttributes(params, function (err, data) {
 		// successful response
 		console.log(data);
 	}
-});
+}); */
+
+// }}}
