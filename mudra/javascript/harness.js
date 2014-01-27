@@ -1,8 +1,9 @@
 // this is the groundwork for the js message queue event generator for mudra
 
-/*
+var fs = require('fs');
+
+/* CONFIG PARSING  {{{
  *
- * CONFIG PARSING
  *
  */
 
@@ -14,6 +15,20 @@
 */
 var saslconfig = require('./sasl.json');
 
+/* Your mudra.json looks like:
+{
+	"channels" : [ '##mudra', '#bots' ]
+	"showErrors" : true,
+	"autoRejoin" : true,
+	"autoConnect": true,
+	// etc etc etc. See irc.Client() for named parameters.
+}
+*/
+var mudraconfig = require( './mudra.json' );
+// XXX: clean this up. hashrefslice or something?
+mudraconfig.saslnick = saslconfig.saslnick;
+mudraconfig.saslpassword = saslconfig.saslpassword;
+
 /* Your aws.json looks like:
 {
 	"accessKeyId": "AKadlkjasdlkajsd",
@@ -24,6 +39,8 @@ var saslconfig = require('./sasl.json');
 var SQS = require('aws-sqs');
 awsconfig = require('./aws.json');
 
+// }}}
+
 /* IRC INSTANTIATION {{{
  *
  *
@@ -31,35 +48,7 @@ awsconfig = require('./aws.json');
 
 // instantiate the bot
 var irc = require('irc');
-var client = new irc.Client('irc.freenode.net', 'mudra', {
-	userName    : 'mudra',
-	realName    : 'this gigantic robot kills',
-	port        : 6697,
-	debug       : true,
-	showErrors  : true,
-	autoRejoin  : true,
-	autoConnect : true,
-	channels    : ['##mudra'],
-	stripColors : false,
-	channelPrefixes : "&#",
-	messageSplit : 512,
-
-	// these three lines refer to ssl
-	secure      : true,
-	selfSigned  : true, // basically give no fucks. it's irc.
-	certExpired : true, // basically give no fucks. it's irc.
-
-	// sasl auth -- see above re json file
-	sasl        : true,
-	userName    : saslconfig.saslnick,
-	password    : saslconfig.saslpassword
-
-	/*
-	floodProtection : false,
-	floodProtectionDelay : 1000,
-	*/
-
-});
+var client = new irc.Client( 'irc.freenode.net', 'mudra', mudraconfig );
 
 // let's add some event handlers
 
@@ -68,9 +57,21 @@ client.addListener('error', function(message) {
 	console.log('error: ', message);
 });
 
-// the raw listener here can basically be ignored if debug is set to true above.
+// so for now, we're going to write the commands to files so we can compare
+// what they look like and get an idea for what they will look like in the
+// queue.
+//
 client.addListener( 'raw', function(message) {
-	// console.log( 'raw received: ' + message.command + ' ' + message.args + "\n" );
+	console.log( 'raw received: ' + message.command + ' ' + message.args );
+	fs.writeFile( 
+		'./freenode/' + message.command,
+		JSON.stringify( message.args, null, '\t' ) + "\n",
+		function(err) {
+			if(err) {
+				console.log(err);
+			}
+		}
+	);
 });
 
 // }}}
