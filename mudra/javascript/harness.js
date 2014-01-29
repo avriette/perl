@@ -18,6 +18,7 @@ var moment = require('moment');
 }
 */
 var mudraconfig = require( './mudra.json' );
+console.log( mudraconfig );
 
 /* Your aws.json looks like:
 {
@@ -40,8 +41,9 @@ awsconfig = require('./aws.json');
 var jsbot = require('./jsbot/jsbot');
 var instance = jsbot.createJSBot('mudra');
 
-for (net in mudraconfig) {
+for (net in Object.keys(mudraconfig)) {
 // for (net = 0; net <= mudraconfig.length(); net++) {
+	console.log(net.netname + ': ' + net.hostname + ':' + net.port);
 	instance.addConnection(
 		net.netname,  // e.g., "freenode"
 		net.hostname, // e.g., "irc.freenode.net"
@@ -56,8 +58,8 @@ for (net in mudraconfig) {
 				// is there an event emitted here if the channel is un-joinable etc?
 				instance.join(event, chans[chan]);
 			}
-		}
-	).bind(this);
+		}.bind(this)
+	);
 } // for net
 
 // XXX: why do we do this?
@@ -76,7 +78,7 @@ instance.connectAll();
 // what they look like and get an idea for what they will look like in the
 // queue.
 //
-client.addListener( 'raw', function(message) {
+instance.addListener( 'raw', function(message) {
 	console.log( 'raw received: ' + message.command + ' ' + message.args );
 	var now = moment();
 	var dirname = mudraconfig.netname + '/' + message.command;
