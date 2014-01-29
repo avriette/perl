@@ -1,6 +1,7 @@
 // this is the groundwork for the js message queue event generator for mudra
 
 var fs = require('fs');
+var moment = require('moment');
 
 /* CONFIG PARSING  {{{
  *
@@ -63,8 +64,13 @@ client.addListener('error', function(message) {
 //
 client.addListener( 'raw', function(message) {
 	console.log( 'raw received: ' + message.command + ' ' + message.args );
-	fs.writeFile( 
-		'./freenode/' + message.command,
+	var now = moment();
+	var dirname = mudraconfig.netname + '/' + message.command;
+	var fname   = dirname + '/' + now.unix() + '.' + now.millisecond() + '.json';
+	// synchronous mkdir - we are just going to make it each time and
+	// ignore the error rather than check for -d or find mkdir -p
+	fs.mkdir( './' + mudraconfig.netname + '/' + message.command, '0700' );
+	fs.writeFile( fname,
 		JSON.stringify( message.args, null, '\t' ) + "\n",
 		function(err) {
 			if(err) {
