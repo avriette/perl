@@ -8,14 +8,6 @@ var moment = require('moment');
  *
  */
 
-/* Your sasl.json looks like:
-{
-	"saslpassword" : "i#like#22/7",
-	"saslnick"     : "mudra"
-}
-*/
-var saslconfig = require('./sasl.json');
-
 /* Your mudra.json looks like:
 {
 	"channels" : [ '##mudra', '#bots' ]
@@ -26,9 +18,6 @@ var saslconfig = require('./sasl.json');
 }
 */
 var mudraconfig = require( './mudra.json' );
-// XXX: clean this up. hashrefslice or something?
-mudraconfig.saslnick = saslconfig.saslnick;
-mudraconfig.saslpassword = saslconfig.saslpassword;
 
 /* Your aws.json looks like:
 {
@@ -48,38 +37,40 @@ awsconfig = require('./aws.json');
  */
 
 // instantiate the bot
-var jsbot = require('jsbot/jsbot');
+var jsbot = require('./jsbot/jsbot');
 var instance = jsbot.createJSBot('mudra');
 
-for (net = 0; net <= mudraconfig.length(); net++) {
+for (net in mudraconfig) {
+// for (net = 0; net <= mudraconfig.length(); net++) {
 	instance.addConnection(
-		mudraconfig[net].netname,  // e.g., "freenode"
-		mudraconfig[net].hostname, // e.g., "irc.freenode.net"
-		mudraconfig[net].port,     // e.g., "6667", "+6697"
+		net.netname,  // e.g., "freenode"
+		net.hostname, // e.g., "irc.freenode.net"
+		net.port,     // e.g., "6667", "+6697"
 
 		// join the channels listed in mudraconfig[net].channels, which looks like:
 		// [ "##mudra", "#realitest" ] or just
 		// [ "##mudra" ]
 		function(event) {
-			chans = mudraconfig[net].channels;
+			chans = net.channels;
 			for (chan = 0; chan <= chans.length(); chan++) {
 				// is there an event emitted here if the channel is un-joinable etc?
 				instance.join(event, chans[chan]);
-			}.bind(this);
+			}
 		}
-	);
+	).bind(this);
 } // for net
 
+// XXX: why do we do this?
+instance.ignoreTag('mudra', 'join');
 
-var irc = require('irc');
-var client = new irc.Client( 'irc.freenode.net', 'mudra', mudraconfig );
-
-// let's add some event handlers
-
-// catch errors which are otherwise lethal
-client.addListener('error', function(message) {
-	console.log('error: ', message);
+// because rfc 1459 is shitty.
+instance.addPreEmitHook(function(event, callback) {
+	if(event.user) event.user = event.user.toLowerCase();
+	callback(false);
 });
+
+// go forth and conquer
+instance.connectAll();
 
 // so for now, we're going to write the commands to files so we can compare
 // what they look like and get an idea for what they will look like in the
@@ -137,7 +128,6 @@ sqs.createQueue( 'psmurf', { }, function(err, res) {
 		console.log('attempted destruction of queue');
 	});
 });
-
 
 // }}}
 
