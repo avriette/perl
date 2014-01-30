@@ -2,6 +2,7 @@
 
 var fs = require('fs');
 var moment = require('moment');
+var mcfg = './mudra.json';
 
 /* CONFIG PARSING  {{{
  *
@@ -17,8 +18,9 @@ var moment = require('moment');
 	// etc etc etc. See irc.Client() for named parameters.
 }
 */
-var mudraconfig = require( './mudra.json' );
-console.log( mudraconfig );
+var mudraconfig = function(fname) {
+	require( fname );
+};
 
 /* Your aws.json looks like:
 {
@@ -41,8 +43,9 @@ awsconfig = require('./aws.json');
 var jsbot = require('./jsbot/jsbot');
 var instance = jsbot.createJSBot('mudra');
 
-for (net in Object.keys(mudraconfig)) {
-// for (net = 0; net <= mudraconfig.length(); net++) {
+// for (net in Object.keys(mudraconfig('./mudra.json'))) {
+for (n = 0; n <= mudraconfig(mcfg).length(); n++) {
+	var net = mudraconfig(mcfg)[n];
 	console.log(net.netname + ': ' + net.hostname + ':' + net.port);
 	instance.addConnection(
 		net.netname,  // e.g., "freenode"
