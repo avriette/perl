@@ -10,6 +10,7 @@ WriteMakefile(
 		'Scalar::Util'     => 0,
 		'JSON'             => 0,
 		'Class::Accessor'  => 0,
+		'Crypt::Mac::HMAC' => 0,
 	},
 	'dist'            => {
 		'COMPRESS' => 'gzip -9f',
