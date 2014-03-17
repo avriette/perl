@@ -1,0 +1,9 @@
+// this is a get, but there are no arguments
+
+// return
+{
+	timestamp : [ // unix timestamp
+		int, // satoshis
+		float, // btc
+	]
+}
