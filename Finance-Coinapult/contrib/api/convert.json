@@ -1,0 +1,13 @@
+// POST arguments
+{
+	"timestamp"   : // unix timestamp
+	"nonce"       : // string
+	"inCurrency"  : // 'btc', 'usd', etc
+	"outCurrency" : // 'btc', 'usd', etc
+	"amount"      : // float (optional)
+}
+
+// return:
+
+// GP says this is a lie.
+transaction_id // string

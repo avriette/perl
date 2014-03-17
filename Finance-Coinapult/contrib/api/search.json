@@ -1,0 +1,15 @@
+// POST arguments
+{
+	"timestamp"      : // unix timestamp
+	"nonce"          : // string
+	"transaction_id" : // optional, what type is this?
+	"currency"       : // 'btc', 'usd', etc
+	"to"             : // optional
+	"from"           : // optional
+	"callback"       : // url, optional // note: not in docs
+}
+
+// return:
+
+// GP says this is a lie.
+transaction_id // string

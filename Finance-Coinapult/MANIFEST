@@ -1,0 +1,15 @@
+.gitignore
+Changes
+lib/Finance/Coinapult.pm
+Makefile.PL
+MANIFEST
+MANIFEST.SKIP
+README.md
+t/00_use.t
+TODO
+contrib/api
+contrib/api/convert.json
+contrib/api/getbitcoinaddress.json
+contrib/api/receive.json
+contrib/api/search.json
+contrib/api/send.json

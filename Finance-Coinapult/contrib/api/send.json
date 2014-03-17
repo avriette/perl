@@ -1,0 +1,14 @@
+// POST arguments
+{
+	"timestamp"   : // unix timestamp
+	"nonce"       : // string
+	"currency"    : // 'btc', 'usd', etc
+	"amount"      : // float (optional)
+	"address"     : // recipient's address (phone number, btc address, email)
+	"callback"    : // url, optional
+}
+
+// return:
+
+// GP says this is a lie.
+transaction_id // string

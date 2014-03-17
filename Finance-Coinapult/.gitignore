@@ -1,0 +1,12 @@
+*.swp
+*.swo
+*.swn
+Makefile.old
+MYMETA.json
+MYMETA.yml
+Makefile
+blib/
+*.tar.gz
+pm_to_blib
+.DS_Store
+key.json
