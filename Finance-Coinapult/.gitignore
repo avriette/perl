@@ -10,3 +10,4 @@ blib/
 pm_to_blib
 .DS_Store
 key.json
+vars.sh
