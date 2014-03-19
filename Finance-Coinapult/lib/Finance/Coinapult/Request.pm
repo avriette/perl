@@ -9,7 +9,7 @@ sub new {
 	my $self = { };
 	my %params = (
 		header => {
-			optional => 1
+			optional => 1,
 			type     => OBJECT,
 		},
 		request => {

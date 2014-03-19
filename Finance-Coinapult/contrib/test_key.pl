@@ -40,10 +40,6 @@ my $jsonified_params = encode_json {
 $jsonified_params = JSON->new->canonical->encode(\%params);
 say "json params => $jsonified_params";
 
-my $hdr = HTTP::Headers->new(
-	'cpt-key' => KEY,
-	'cpt-hmac' => hmac_hex( 'SHA512', SECRET, $jsonified_params ),
-);
 my $req = POST CONVERT_URL,
 	'cpt-key' => KEY,
 	'cpt-hmac' => hmac_hex( 'SHA512', SECRET, $jsonified_params ),

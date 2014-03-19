@@ -27,6 +27,8 @@ sub new {
 sub getRates {
 	my $self = shift;
 
+	my $uri_loc = "/getRates";
+
 	validate( @_, {
 		inCurrency => {
 			optional => 0,
@@ -42,13 +44,63 @@ sub getRates {
 		},
 	} );
 
+	my $args = { @_ };
+
 	# Note that encoding gets screwy here if $timestamp is a string vs an int.
 	# Yes, in perl. (via GP)
-	my $timestamp = sprintf '%d', time();
-	my $hdr  = HTTP::Headers->new(
-		'cpt-key' => $self->{env}->get_key(),
+	$args->{timestamp} = sprintf '%d', time();
 
+	# Just a unique (per 24h) identifier
+	$args->{nonce} = Data::GUID->new()->as_string();
 
+	# Package it, it has to be sorted
+	my $sorted_payload = [ map { $_ => $args->{$_} } sort keys %{ $args } ];
+
+	my $req =
+		POST $self->{env}->get_api_base().$uri_loc,
+			'cpt-key'  => $self->{env}->get_key(),
+			'cpt-hmac' => hmac_hex( 'SHA512',
+				$self->secret(),
+				_sort_encode_json( $sorted_payload )
+			),
+			Content => $sorted_payload; # POST
+
+	my $r = Finance::Coinapult::Request->new(
+		request => $req,
+		payload => $sorted_payload,
+		guid    => $args->{nonce},
+		key     => $self->key(),
+	);
+
+	return {
+		request => $r,
+		data    => $r->{request}->content(),
+	};
+
+}
+
+sub secret {
+	validate_pos( @_,
+		{ isa => 'Finance::Coinapult' }
+	);
+	my $self = shift;
+	return $self->{env}->get_secret();
+}
+
+sub key {
+	validate_pos( @_,
+		{ isa => 'Finance::Coinapult' }
+	);
+	my $self = shift;
+	return $self->{env}->get_key();
+}
+
+# This is a private sub, please don't use this.
+sub _sort_encode_json {
+	validate_pos( @_, { type => ARRAYREF } );
+	my $href = shift;
+	my $json = JSON->new()->canonical()->encode( $href );
+	return $json;
 }
 
 "sic semper tyrannis";
