@@ -23,7 +23,7 @@ sub new {
 		}
 	} );
 
-	my ($json, $config, $yaml_config) = %{ { @_ } }{ qw{ json config yaml_config } };
+	my ($json, $config, $yaml_config) = @{ { @_ } }{ qw{ json config yaml_config } };
 
 	my $self = { };
 

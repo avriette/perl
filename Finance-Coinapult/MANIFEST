@@ -7,7 +7,6 @@ MANIFEST.SKIP
 README.md
 t/00_use.t
 TODO
-contrib/api
 contrib/api/convert.json
 contrib/api/getbitcoinaddress.json
 contrib/api/receive.json
