@@ -4,7 +4,7 @@ use v5.18.0;
 
 use Params::Validate qw{ :all };
 use Carp qw{ confess cluck };
-# use YAML::Accessor;
+use base qw{ Class::Accessor };
 
 sub new {
 	my $class = shift;
@@ -20,12 +20,22 @@ sub new {
 		yaml_config => {
 			type     => SCALAR,
 			optional => 1,
-		}
+		},
+		api_base => {
+			type     => SCALAR,
+			optional => 1,
+		},
 	} );
 
-	my ($json, $config, $yaml_config) = @{ { @_ } }{ qw{ json config yaml_config } };
+	my ($json, $config, $yaml_config, $api_base) =
+		@{ { @_ } }{ qw{ json config yaml_config api_base } };
 
 	my $self = { };
+
+	$self->{api_base} = $api_base ? $api_base :                              # \
+		$ENV{COINAPULT_API_BASE} ? $ENV{COINAPULT_API_BASE} :                  # \
+		confess "Coinapult API base needs to be defined in the environment ".  # \
+			"or passed in to the constructor.";
 
 	if ($json) {
 		use JSON::MaybeXS;
@@ -73,7 +83,10 @@ sub new {
 		confess "Failed to parse configuration arguments or values. Try again.";
 	}
 
-	return bless $self, $class;
+	$class->follow_best_practice();
+	$class->mk_ro_accessors( qw{ key secret api_base } );
+	bless $self, $class;
+
 }
 
 "sic semper tyrannis";

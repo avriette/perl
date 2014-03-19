@@ -12,3 +12,6 @@ contrib/api/getbitcoinaddress.json
 contrib/api/receive.json
 contrib/api/search.json
 contrib/api/send.json
+t/01_environment.t
+contrib/api/getrates.json
+lib/Finance/Coinapult/Environment.pm
