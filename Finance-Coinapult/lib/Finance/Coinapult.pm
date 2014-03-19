@@ -120,11 +120,31 @@ Public API access for Coinapult in perl. Ta-da!
 =head1 SYNOPSIS
 
   use Finance::Coinapult;
+
   my $c = Finance::Coinapult->new(
-    key    => 'asdkjakjad',   # This is not actually a real key
-    secret => 'sdlkjdlkjasd', # This is not actually a real secret
+    # Config parameters get passed as a hashref
+    config => {
+      key    => 'asdkjakjad',   # This is not actually a real key
+      secret => 'sdlkjdlkjasd', # This is not actually a real secret
+    },
+
+    # or ...
+    json => 'a json string that includes a key and a secret',
+
+    # or ...
+    yaml_config => 'a yaml config file suitable for YAML::Accessor',
+
+    # lastly, please pass an api base (or we will try to find a reasonable
+    # default, but cannot guarantee It Will Work.
+    api_base => 'http://api.coinapult.com/',
   );
-  $c->get_balance(); # and so on
+
+  # And so on. See below for full list of api commands.
+  $c->getRates(
+    inCurrency  => 'USD',
+    outCurrency => 'BTC',
+    amount      => 1,
+  );
 
 =head1 DESCRIPTION
 
