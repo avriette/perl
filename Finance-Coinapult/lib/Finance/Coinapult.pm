@@ -2,6 +2,55 @@ package Finance::Coinapult;
 
 use 5.12.0;
 
+use Params::Validate qw{ :all };
+use Finance::Coinapult::Environment;
+use Finance::Coinapult::Request;
+use WWW::Curl::Simple;
+use HTTP::Request::Common;
+use HTTP::Headers;
+use JSON::MaybeXS;
+use Data::GUID;
+
+sub new {
+	my $class = shift;
+
+	my %args = @_;  # this is validated in F::C::Environment
+	my $self = { };
+	$self->{env} = Finance::Coinapult::Environment->new( %args );
+
+	return bless $self, $class;
+}
+
+# Note we are following the studly caps here because that's what is in
+# the api spec, regardless of whether this is the Perlish(tm) way to do
+# things or not.
+sub getRates {
+	my $self = shift;
+
+	validate( @_, {
+		inCurrency => {
+			optional => 0,
+			type     => SCALAR,
+		},
+		outCurrency => {
+			optional => 0,
+			type     => SCALAR,
+		},
+		amount => {
+			optional => 0,
+			type     => SCALAR
+		},
+	} );
+
+	# Note that encoding gets screwy here if $timestamp is a string vs an int.
+	# Yes, in perl. (via GP)
+	my $timestamp = sprintf '%d', time();
+	my $hdr  = HTTP::Headers->new(
+		'cpt-key' => $self->{env}->get_key(),
+
+
+}
+
 "sic semper tyrannis";
 
 # jane@cpan.org // vim:tw=80:ts=2:noet
