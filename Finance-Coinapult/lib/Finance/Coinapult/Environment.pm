@@ -46,6 +46,34 @@ sub new {
 		else {
 			confess "The supplied hashref does not include the requisite keys.";
 		}
+	}
+	elsif ($yaml_config) {
+		use YAML::Accessor;
+		my $yc = YAML::Accessor->new(
+			file     => $yaml_config,
+			readonly => 1,
+			damian   => 1,
+		)
+			or confess "Failed to read yaml config file.";
+
+		$self->{yaml_config} = $yc;
+		if ($self->{yaml_config}->get_key() and $self->{yaml_config}->get_secret()) {
+			$self->{key}    = $self->{yaml_config}->get_key();
+			$self->{secret} = $self->{yaml_config}->get_secret();
+		}
+		else {
+			confess "YAML config parsed, but either key or secret (or both!) missing.";
+		}
+	}
+	elsif (defined $ENV{COINAPULT_SECRET} and defined $ENV{COINAPULT_KEY}) {
+		$self->{key}    = $ENV{COINAPULT_KEY};
+		$self->{secret} = $ENV{COINAPULT_SECRET};
+	}
+	else {
+		confess "Failed to parse configuration arguments or values. Try again.";
+	}
+
+	return bless $self, $class;
 }
 
 "sic semper tyrannis";
