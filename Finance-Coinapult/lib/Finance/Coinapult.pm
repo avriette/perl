@@ -28,6 +28,8 @@ sub new {
 sub getRates {
 	my $self = shift;
 
+  # This is standard for all api calls
+  # XXX: should this be a method? who would use it?
 	my $uri_loc = "/getRates";
 
 	validate( @_, {
@@ -96,13 +98,34 @@ sub key {
 	return $self->{env}->get_key();
 }
 
-# This is a private sub, please don't use this.
+# below this line are private subs. please do not use them. they are subject
+# to change at the whim of the developer, me. thx.
+#
+
+# Because these have to be sorted by alpha, we have a utility sub to do it
+# for us rather than replicate code.
+#
 sub _sort_encode_json {
 	validate_pos( @_, { type => ARRAYREF } );
 	my $href = shift;
 	my $json = JSON->new()->canonical()->encode( $href );
 	return $json;
 }
+
+# Turn the return into an aref. What happens after that is up to you.
+#
+sub _demarshal {
+	# amount=1&inCurrency=USD&nonce=8FDF8970-B056-11E3-AB3B-9724B38F7484&outCurrency=BTC&timestamp=1395337157
+
+	my $string = shift;
+	my @pairs = [ split '&', $string ];
+
+	# Returns an aref because we use it elsewhere for payloads. Otherwise this 
+	# looks a lot like a hash.
+	#
+	return [ map { split '=', $_ } @pairs ];
+}
+
 
 "sic semper tyrannis";
 
