@@ -3,10 +3,11 @@ package Finance::Coinapult;
 use 5.12.0;
 
 use Params::Validate qw{ :all };
+use Crypt::Mac::HMAC qw{ hmac_hex };
 use Finance::Coinapult::Environment;
 use Finance::Coinapult::Request;
-use WWW::Curl::Simple;
 use HTTP::Request::Common;
+use WWW::Curl::Simple;
 use HTTP::Headers;
 use JSON::MaybeXS;
 use Data::GUID;

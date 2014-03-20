@@ -1,12 +1,11 @@
 package Finance::Coinapult::Request;
 
 use v5.12.0;
-use Class::Accessor;
+use base qw{ Class::Accessor };
 use Params::Validate qw{ :all };
 
 sub new {
 	my $class = shift;
-	my $self = { };
 	my %params = (
 		header => {
 			optional => 1,
@@ -31,9 +30,18 @@ sub new {
 	);
 	validate( @_, { %params } );
 
+	my $self = { @_ };
+
 	$class->follow_best_practice();
 	$class->mk_accessors( keys %params );
-	return bless $self, $class;
+	my $rv = {
+		map { 
+			$_ => $self->{$_}
+		} keys %params
+	};
+	# @{ $self }{sort keys %params} = @{ $self }{ sort keys %{ $self } };
+	# return bless $self, $class;
+	return bless $rv, $class;
 }
 
 "sic semper tyrannis";
