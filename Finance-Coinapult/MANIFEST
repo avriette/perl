@@ -15,3 +15,4 @@ contrib/api/send.json
 t/01_environment.t
 contrib/api/getrates.json
 lib/Finance/Coinapult/Environment.pm
+lib/Finance/Coinapult/Request.pm
