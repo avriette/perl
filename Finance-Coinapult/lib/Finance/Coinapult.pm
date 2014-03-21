@@ -25,12 +25,12 @@ sub new {
 # Note we are following the studly caps here because that's what is in
 # the api spec, regardless of whether this is the Perlish(tm) way to do
 # things or not.
-sub getRates {
+sub convert {
 	my $self = shift;
 
   # This is standard for all api calls
   # XXX: should this be a method? who would use it?
-	my $uri_loc = "/getRates";
+	my $uri_loc = "/t/convert";
 
 	validate( @_, {
 		inCurrency => {
@@ -68,6 +68,8 @@ sub getRates {
 			),
 			Content => $sorted_payload; # POST
 
+	warn $req->as_string();
+
 	my $r = Finance::Coinapult::Request->new(
 		request => $req,
 		payload => $sorted_payload,
@@ -75,9 +77,13 @@ sub getRates {
 		key     => $self->key(),
 	);
 
+	my $c = WWW::Curl::Simple->new();
+	my $content = $c->request( $r->{request} )->content();
+
 	return {
+		curl    => $c,
 		request => $r,
-		data    => $r->{request}->content(),
+		data    => $content,
 	};
 
 }

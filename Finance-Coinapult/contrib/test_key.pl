@@ -1,6 +1,8 @@
 #!/usr/bin/perl
 
-use 5.18.0;
+use v5.18.0;
+
+use warnings; use strict;
 
 use WWW::Curl::Simple;
 use HTTP::Request::Common;
@@ -12,13 +14,24 @@ use Data::GUID;
 use JSON::MaybeXS; 
 # Note that mst says JSON::MaybeXS is rage-driven development(tm)
 
-use constant RATES_URL   => 'http://api.coinapult.com/api/getRates';
-use constant CONVERT_URL => 'http://api.coinapult.com/api/t/convert';
+my $secret = $ENV{COINAPULT_SECRET};
+my $key    = $ENV{COINAPULT_KEY};	
+my $base   = $ENV{COINAPULT_BASE};
+
+say "$base:$key ...";
+
+# use constant RATES_URL   => 'http://api.coinapult.com/api/getRates';
+my $KEY = $key;
+my $RATES_URL = $base.'/api/getRates';
+my $CONVERT_URL = $base.'api/t/convert';
+my $SECRET = $secret;
 
 my $curl = WWW::Curl::Simple->new();
 
-say "fetching rates...";
-say $curl->get( RATES_URL )->decoded_content();
+warn "$RATES_URL";
+
+say "fetching rates at $RATES_URL";
+say $curl->get( $RATES_URL )->decoded_content();
 
 my %params = (
 	timestamp   => (sprintf '%d', time()),
@@ -40,9 +53,9 @@ my $jsonified_params = encode_json {
 $jsonified_params = JSON->new->canonical->encode(\%params);
 say "json params => $jsonified_params";
 
-my $req = POST CONVERT_URL,
-	'cpt-key' => KEY,
-	'cpt-hmac' => hmac_hex( 'SHA512', SECRET, $jsonified_params ),
+my $req = POST $CONVERT_URL,
+	'cpt-key' => $KEY,
+	'cpt-hmac' => hmac_hex( 'SHA512', $SECRET, $jsonified_params ),
 	Content => $sorted_keys;
 
 say "testing api key...";
