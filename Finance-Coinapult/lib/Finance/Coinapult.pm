@@ -4,6 +4,7 @@ use 5.12.0;
 
 use Params::Validate qw{ :all };
 use Crypt::Mac::HMAC qw{ hmac_hex };
+use Finance::Coinapult::RequestFactory;
 use Finance::Coinapult::Environment;
 use Finance::Coinapult::Request;
 use HTTP::Request::Common;
@@ -25,7 +26,11 @@ sub new {
 # Note we are following the studly caps here because that's what is in
 # the api spec, regardless of whether this is the Perlish(tm) way to do
 # things or not.
-sub convert {
+#
+
+# Convert from one currency (e.g., 'BTC', 'EUR', etc) to another
+#
+sub convert { # {{{ convert
 	my $self = shift;
 
 	# This is standard for all api calls
@@ -70,8 +75,6 @@ sub convert {
 			),
 			Content => $sorted_payload; # POST
 
-	warn $req->as_string();
-
 	my $r = Finance::Coinapult::Request->new(
 		request => $req,
 		payload => $sorted_payload,
@@ -88,7 +91,56 @@ sub convert {
 		data    => $content,
 	};
 
+} # }}} convert
+
+sub receive {
+	my $self = shift;
+
+=cut {{{ json args
+
+// POST arguments
+{
+	"timestamp"   : // unix timestamp
+	"nonce"       : // string
+	"currency"    : // 'btc', 'usd', etc
+	"outCurrency" : // 'btc', 'usd', etc, optional
+	"method"      : // 'internal' or 'bitcoin'
+	"amount"      : // float (optional)
+	"outAmount"   : // float (optional)
+	"callback"    : // url, optional
 }
+
+=cut }}}
+
+	# This is standard for all api calls
+	# XXX: should this be a method? who would use it?
+	my $uri_loc = "/t/receive";
+
+	validate( @_, {
+		map {
+			{
+				optional => 0,
+				type     => SCALAR,
+			} 
+		} qw{ timestamp currency method currency },
+
+		map {
+			{
+				optional => 1,
+				type     => SCALAR
+			}
+		} qw{ outCurrency amount outAmount callback },
+	} );
+
+	my $args = { @_ };
+
+	my $cfrf = Finance::Coinapult::RequestFactory->mk_request(
+		params => $args,
+		uri    => $uri_loc,
+	);
+
+} # }}} convert
+
 
 sub secret {
 	validate_pos( @_,
@@ -147,7 +199,7 @@ Public API access for Coinapult in perl. Ta-da!
   );
 
   # And so on. See below for full list of api commands.
-  $c->getRates(
+  $c->convert(
     inCurrency  => 'USD',
     outCurrency => 'BTC',
     amount      => 1,

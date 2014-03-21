@@ -42,7 +42,7 @@ sub mk_request {
 
 	my $req = # {{{ POST
 		POST $c->{env}->get_api_base().$uri_loc,
-			'cpt-key'  => $celf->{env}->get_key(),
+			'cpt-key'  => $c->key(),
 			'cpt-hmac' => hmac_hex( 'SHA512',
 				$c->secret(),
 				JSON->new()->canonical()->encode( {
@@ -54,8 +54,8 @@ sub mk_request {
 	my $r = Finance::Coinapult::Request->new(
 		request => $req,
 		payload => $sorted_payload,
-		guid    => $self->{nonce},
-		key     => $self->key(),
+		guid    => $args->{nonce},
+		key     => $c->key(),
 	);
 
 	my $curl = WWW::Curl::Simple->new();

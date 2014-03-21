@@ -13,7 +13,7 @@ ok($environment->get_secret());
 
 # In theory, the empty constructor pulls from %ENV
 my $c = Finance::Coinapult->new( );
-my $rates = $c->getRates(
+my $rates = $c->convert(
 	inCurrency => 'USD',
 	outCurrency => 'BTC',
 	amount => '1',
