@@ -1,4 +1,4 @@
-use Test::More tests => 6;
+use Test::More tests => 7;
 BEGIN { use_ok('Finance::Coinapult') };
 BEGIN { use_ok('Finance::Coinapult::Environment') };
 
@@ -19,3 +19,11 @@ my $rates = $c->convert(
 	amount => '1',
 );
 ok( $rates );
+
+my $cfr = $c->receive(
+	currency => 'USD',
+	method   => 'internal',
+	amount   => 100,
+);
+
+ok( $cfr );

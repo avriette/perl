@@ -93,7 +93,7 @@ sub convert { # {{{ convert
 
 } # }}} convert
 
-sub receive {
+sub receive { # {{{ receive
 	my $self = shift;
 
 =cut {{{ json args
@@ -116,30 +116,32 @@ sub receive {
 	# XXX: should this be a method? who would use it?
 	my $uri_loc = "/t/receive";
 
-	validate( @_, {
-		map {
-			{
+	state $spec = {
+		( map {
+			$_ => {
 				optional => 0,
 				type     => SCALAR,
-			} 
-		} qw{ timestamp currency method currency },
+			}
+		} qw{ method currency } ),
 
-		map {
-			{
+		( map {
+			$_ => {
 				optional => 1,
 				type     => SCALAR
 			}
-		} qw{ outCurrency amount outAmount callback },
-	} );
+		} qw{ outCurrency amount outAmount callback } ),
+	};
+
+	validate( @_, $spec );
 
 	my $args = { @_ };
 
-	my $cfrf = Finance::Coinapult::RequestFactory->mk_request(
+	return Finance::Coinapult::RequestFactory->mk_request( $self,
 		params => $args,
 		uri    => $uri_loc,
 	);
 
-} # }}} convert
+} # }}} receive
 
 
 sub secret {
