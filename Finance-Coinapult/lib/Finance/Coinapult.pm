@@ -28,8 +28,8 @@ sub new {
 sub convert {
 	my $self = shift;
 
-  # This is standard for all api calls
-  # XXX: should this be a method? who would use it?
+	# This is standard for all api calls
+	# XXX: should this be a method? who would use it?
 	my $uri_loc = "/t/convert";
 
 	validate( @_, {
