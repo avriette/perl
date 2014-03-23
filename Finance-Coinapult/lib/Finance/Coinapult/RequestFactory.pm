@@ -26,9 +26,7 @@ sub mk_request {
 		},
 	} );
 
-	my $args = { @_ };
-
-	my $uri_loc = $args->{uri};
+	my ($uri_loc, $args) = @{ { @_ } }{ qw{ uri params } };
 
 	# Note that encoding gets screwy here if $timestamp is a string vs an int.
 	# Yes, in perl. (via GP)

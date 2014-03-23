@@ -28,71 +28,6 @@ sub new {
 # things or not.
 #
 
-# Convert from one currency (e.g., 'BTC', 'EUR', etc) to another
-#
-sub convert { # {{{ convert
-	my $self = shift;
-
-	# This is standard for all api calls
-	# XXX: should this be a method? who would use it?
-	my $uri_loc = "/t/convert";
-
-	validate( @_, {
-		inCurrency => {
-			optional => 0,
-			type     => SCALAR,
-		},
-		outCurrency => {
-			optional => 0,
-			type     => SCALAR,
-		},
-		amount => {
-			optional => 0,
-			type     => SCALAR
-		},
-	} );
-
-	my $args = { @_ };
-
-	# Note that encoding gets screwy here if $timestamp is a string vs an int.
-	# Yes, in perl. (via GP)
-	$args->{timestamp} = sprintf '%d', time();
-
-	# Just a unique (per 24h) identifier
-	$args->{nonce} = Data::GUID->new()->as_string();
-
-	# Package it, it has to be sorted
-	my $sorted_payload = [ map { $_ => $args->{$_} } sort keys %{ $args } ];
-
-	my $req =
-		POST $self->{env}->get_api_base().$uri_loc,
-			'cpt-key'  => $self->{env}->get_key(),
-			'cpt-hmac' => hmac_hex( 'SHA512',
-				$self->secret(),
-				JSON->new()->canonical()->encode( {
-					map { $_ => $args->{$_} } sort keys %{ $args }
-				} )
-			),
-			Content => $sorted_payload; # POST
-
-	my $r = Finance::Coinapult::Request->new(
-		request => $req,
-		payload => $sorted_payload,
-		guid    => $args->{nonce},
-		key     => $self->key(),
-	);
-
-	my $c = WWW::Curl::Simple->new();
-	my $content = $c->request( $r->{request} )->content();
-
-	return {
-		curl    => $c,
-		request => $r,
-		data    => $content,
-	};
-
-} # }}} convert
-
 sub receive { # {{{ receive
 	my $self = shift;
 
@@ -143,6 +78,149 @@ sub receive { # {{{ receive
 
 } # }}} receive
 
+sub send { # {{{ send
+	my $self = shift;
+
+=cut {{{ json args
+
+// POST arguments
+{
+	"timestamp"   : // unix timestamp
+	"nonce"       : // string
+	"currency"    : // 'btc', 'usd', etc
+	"amount"      : // float (optional)
+	"outAmount"   : // float (optional)
+}
+
+=cut }}}
+
+	# This is standard for all api calls
+	# XXX: should this be a method? who would use it?
+	my $uri_loc = "/t/send";
+
+	state $spec = {
+		( map {
+			$_ => {
+				optional => 0,
+				type     => SCALAR,
+			}
+		} qw{ amount currency } ),
+
+		( map {
+			$_ => {
+				optional => 1,
+				type     => SCALAR
+			}
+		} qw{ callback } ),
+	};
+
+	validate( @_, $spec );
+
+	my $args = { @_ };
+
+	return Finance::Coinapult::RequestFactory->mk_request( $self,
+		params => $args,
+		uri    => $uri_loc,
+	);
+
+} # }}} send
+
+sub convert { # {{{ convert
+	my $self = shift;
+
+=cut {{{ json args
+
+// POST arguments
+{
+	"timestamp"   : // unix timestamp
+	"nonce"       : // string
+	"inCurrency"  : // 'btc', 'usd', etc
+	"outCurrency" : // 'btc', 'usd', etc
+	"amount"      : // float
+}
+
+=cut }}}
+
+	# This is standard for all api calls
+	# XXX: should this be a method? who would use it?
+	my $uri_loc = "/t/convert";
+
+	state $spec = {
+		( map {
+			$_ => {
+				optional => 0,
+				type     => SCALAR,
+			}
+		} qw{ timestamp inCurrency outCurrency amount } ),
+
+		( map {
+			$_ => {
+				optional => 1,
+				type     => SCALAR
+			}
+		} qw{ callback } ),
+	};
+
+	validate( @_, $spec );
+
+	my $args = { @_ };
+
+	return Finance::Coinapult::RequestFactory->mk_request( $self,
+		params => $args,
+		uri    => $uri_loc,
+	);
+
+} # }}} convert
+
+sub search { # {{{ search
+	my $self = shift;
+
+=cut {{{ json args
+
+// POST arguments
+{
+	"timestamp"       : // unix timestamp
+	"nonce"           : // string
+	"from"            : // string (optional)
+	"to"              : // string (optional)
+	"type"            : // string (invoice, payment, conversion, etc) (optional)
+	"transaction_id"  : // string (optional)
+	"currency"        : // 'btc', 'usd', etc (optional)
+	"callback"        : // a callback, not optional
+}
+
+=cut }}}
+
+	# This is standard for all api calls
+	# XXX: should this be a method? who would use it?
+	my $uri_loc = "/t/search";
+
+	state $spec = {
+		( map {
+			$_ => {
+				optional => 0,
+				type     => SCALAR,
+			}
+		} qw{ callback } ),
+
+		( map {
+			$_ => {
+				optional => 1,
+				type     => SCALAR
+			}
+		} qw{ from to type transaction_id currency } ),
+	};
+
+	validate( @_, $spec );
+
+	my $args = { @_ };
+
+	return Finance::Coinapult::RequestFactory->mk_request( $self,
+		params => $args,
+		uri    => $uri_loc,
+	);
+
+} # }}} search
 
 sub secret {
 	validate_pos( @_,

@@ -35,7 +35,7 @@ sub new {
 	$class->follow_best_practice();
 	$class->mk_accessors( keys %params );
 	my $rv = {
-		map { 
+		map {
 			$_ => $self->{$_}
 		} keys %params
 	};
