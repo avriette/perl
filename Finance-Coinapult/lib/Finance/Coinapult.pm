@@ -1,6 +1,6 @@
 package Finance::Coinapult;
 
-use 5.12.0;
+use v5.18.0;
 
 use Params::Validate qw{ :all };
 use Crypt::Mac::HMAC qw{ hmac_hex };
@@ -229,7 +229,7 @@ with the Coinapult public API.
     outCurrency    => $scalar,
     amount         => $scalar,
 
-    # optional, but please choose one or more
+    # optional
     callback       => $callback_uri,
   );
 
