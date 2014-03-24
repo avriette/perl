@@ -13,6 +13,8 @@ use HTTP::Headers;
 use JSON::MaybeXS;
 use Data::GUID;
 
+use Carp qw{ cluck confess carp };
+
 sub new { # {{{ constructor
 	my $class = shift;
 
@@ -51,6 +53,10 @@ sub new { # {{{ constructor
 		reqd_arguments => [ qw{ inCurrency outCurrency amount } ],
 		opt_arguments  => [ qw{ callback } ],
 	);
+
+	foreach my $method (keys %{ $self->{methods} }) {
+		$self->_gen_soft_sub( subname => $method );
+	}
 
 	return $self;
 
@@ -116,7 +122,7 @@ sub _mk_post { # {{{ _mk_post
 				}
 			} $constructor_args{reqd_arguments} ),
 		};
-	
+
 		validate( @_, $spec );
 
 		my $args = { @_ };
@@ -157,7 +163,9 @@ sub _gen_soft_sub { # {{{
 
 	# This is a really messy soft-sub-ref. The quotes are for consistency
 	# not prettiness.
-	&{$package.'::'.$subname} = $method;
+	{ no strict qw{ refs };
+	*{$package.'::'.$subname} = $method;
+	}
 
 	# There's no real way we can verify this was successful here, so just return true.
 	return $method;
