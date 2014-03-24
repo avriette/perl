@@ -112,21 +112,18 @@ sub _mk_post { # {{{ _mk_post
 		state $spec = {
 			( map {
 				$_ => {
-					optional => 0,
+					optional => 1,
 					type     => SCALAR,
 				}
 			} @{ $constructor_args{opt_arguments} } ),
 	
 			( map {
 				$_ => {
-					optional => 1,
+					optional => 0,
 					type     => SCALAR
 				}
 			} @{ $constructor_args{reqd_arguments} } ),
 		};
-
-		# use Data::Dumper; print Dumper $spec;
-		use Data::Dumper; print Dumper \@_;
 
 		validate( @_, $spec );
 
