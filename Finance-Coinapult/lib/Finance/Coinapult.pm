@@ -26,28 +26,28 @@ sub new { # {{{ constructor
 
 	$self->{methods}->{search} = $self->_mk_post(
 		method_name    => 'search',
-		uri            => '/t/search'
+		uri            => '/t/search',
 		reqd_arguments => [ qw{ callback } ],
 		opt_arguments  => [ qw{ from to type transaction_id currency } ],
 	);
 
 	$self->{methods}->{receive} = $self->_mk_post(
 		method_name    => 'receive',
-		uri            => '/t/receive'
+		uri            => '/t/receive',
 		reqd_arguments => [ qw{ method currency } ],
 		opt_arguments  => [ qw{ outCurrency amount outAmount callback } ],
 	);
 
 	$self->{methods}->{send} = $self->_mk_post(
 		method_name    => 'send',
-		uri            => '/t/send'
+		uri            => '/t/send',
 		reqd_arguments => [ qw{ amount currency } ],
 		opt_arguments  => [ qw{ callback } ],
 	);
 
 	$self->{methods}->{convert} = $self->_mk_post(
 		method_name    => 'convert',
-		uri            => '/t/convert'
+		uri            => '/t/convert',
 		reqd_arguments => [ qw{ inCurrency outCurrency amount } ],
 		opt_arguments  => [ qw{ callback } ],
 	);
@@ -131,6 +131,37 @@ sub _mk_post { # {{{ _mk_post
 	return $new_method;
 
 } # }}} _mk_post
+
+sub _gen_soft_sub { # {{{
+	my $self = shift;
+	# Note from Class::Accessor that the syntax is:
+	#  &{"${class}::$accessor_name"}
+	# *{"${class}::$accessor_name"} = $self->make_ro_accessor($field);
+	validate( @_, {
+		'subname' => {
+			type => SCALAR,
+			optional => 0,
+		},
+		'package' => {
+			type => SCALAR,
+			optional => 1,
+		},
+	} );
+
+	my $subname = { @_ }->{'subname'};
+	my $package = { @_ }->{'package'} || __PACKAGE__;
+
+	my $method = sub {
+		return $self->{methods}->{$subname}->( @_ );
+	};
+
+	# This is a really messy soft-sub-ref. The quotes are for consistency
+	# not prettiness.
+	&{$package.'::'.$subname} = $method;
+
+	# There's no real way we can verify this was successful here, so just return true.
+	return $method;
+} # }}} _gen_soft_sub
 
 "sic semper tyrannis";
 
