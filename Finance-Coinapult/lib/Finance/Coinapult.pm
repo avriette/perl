@@ -129,7 +129,6 @@ sub _mk_post { # {{{ _mk_post
 
 		my $args = { @_ };
 
-	
 		return Finance::Coinapult::RequestFactory->mk_request( $self,
 			params => $args,
 			uri    => $constructor_args{uri},

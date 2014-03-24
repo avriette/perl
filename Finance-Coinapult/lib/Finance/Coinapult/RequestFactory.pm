@@ -28,9 +28,7 @@ sub mk_request {
 
 	my ($uri_loc, $args) = @{ { @_ } }{ qw{ uri params } };
 
-	# Note that encoding gets screwy here if $timestamp is a string vs an int.
-	# Yes, in perl. (via GP)
-	$args->{timestamp} = sprintf '%d', time();
+	$args->{timestamp} = time();
 
 	# Just a unique (per 24h) identifier
 	$args->{nonce} = Data::GUID->new()->as_string();
@@ -44,7 +42,10 @@ sub mk_request {
 			'cpt-hmac' => hmac_hex( 'SHA512',
 				$c->secret(),
 				JSON->new()->canonical()->encode( {
-					map { $_ => $args->{$_} } sort keys %{ $args }
+					# This is magical. Perl encodes this differently if these are
+					# ints vs strings, so we force stringiness. It's an issue with
+					# the backend that is preserved for backwards compatibility.
+					map { $_ => "".$args->{$_} } sort keys %{ $args }
 				} )
 			),
 			Content => $sorted_payload; # }}} POST

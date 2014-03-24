@@ -13,7 +13,7 @@ use JSON::MaybeXS;
 # Note that mst says JSON::MaybeXS is rage-driven development(tm)
 
 my $base_uri = $ENV{COINAPULT_API_BASE};
-my $convert_url = $base_uri.'/api/t/convert';
+my $convert_url = $base_uri.'/t/convert';
 my $key = $ENV{COINAPULT_KEY};
 my $sec = $ENV{COINAPULT_SECRET};
 
