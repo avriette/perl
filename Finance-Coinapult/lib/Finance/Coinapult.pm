@@ -107,25 +107,31 @@ sub _mk_post { # {{{ _mk_post
 
 	my $new_method = sub {
 
+		my $caller_obj = shift;
+
 		state $spec = {
 			( map {
 				$_ => {
 					optional => 0,
 					type     => SCALAR,
 				}
-			} $constructor_args{opt_arguments} ),
+			} @{ $constructor_args{opt_arguments} } ),
 	
 			( map {
 				$_ => {
 					optional => 1,
 					type     => SCALAR
 				}
-			} $constructor_args{reqd_arguments} ),
+			} @{ $constructor_args{reqd_arguments} } ),
 		};
+
+		# use Data::Dumper; print Dumper $spec;
+		use Data::Dumper; print Dumper \@_;
 
 		validate( @_, $spec );
 
 		my $args = { @_ };
+
 	
 		return Finance::Coinapult::RequestFactory->mk_request( $self,
 			params => $args,
