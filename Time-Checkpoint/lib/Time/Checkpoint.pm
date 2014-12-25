@@ -229,7 +229,7 @@ Removes all checkpoints.
 
 =head1 AUTHOR
 
-  Jane A. Avriette <jane@cpan.org>
+  Jane Arc <jane@cpan.org>
 
 =head1 BUGS
 
