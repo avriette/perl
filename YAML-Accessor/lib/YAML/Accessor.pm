@@ -332,11 +332,11 @@ in the interest of speed and ingy's preference.
 
 =head1 AUTHOR
 
-Jane A. Avriette, E<lt>jane@cpan.orgE<gt>
+Jane Arc, E<lt>jane@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2011 by Jane A. Avriette
+Copyright (C) 2014 by Jane Arc
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.10.0 or,
